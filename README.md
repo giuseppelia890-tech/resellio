@@ -62,7 +62,10 @@ Resellio funziona su Android in due modi, scegli quello che preferisci:
 
 ### A) App installabile (PWA) — la più semplice
 
-1. Apri l'indirizzo dell'app in **Chrome** sul telefono
+1. Apri l'indirizzo dell'app in **Chrome** sul telefono:
+
+   **👉 https://giuseppelia890-tech.github.io/resellio/**
+
 2. Tocca il **⋮** in alto a destra → **Installa app** (o "Aggiungi a schermata Home")
 3. comparirà l'icona di Resellio sul telefono: si apre a schermo intero e funziona **anche offline**
    (i dati restano sul telefono, nel suo browser)
