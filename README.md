@@ -73,17 +73,22 @@ Resellio funziona su Android in due modi, scegli quello che preferisci:
 ### B) File APK vero (Capacitor)
 
 Un'app Android vera e propria, installabile trasferendo il file `.apk` sul telefono
-(via cavo, WhatsApp, email…). Da Android: apri il file e consenti le installazioni da origini sconosciute.
+(via cavo, email, WhatsApp, AirDrop…). Da Android: apri il file e consenti le installazioni
+da origini sconosciute.
 
-Per compilarlo servono gli strumenti di build (una tantum, ~500MB già pronti su questo Mac):
+Per compilarlo (una tantum ho già preparato tutto su questo Mac):
 
 ```bash
 cd resellio
-npm install      # una tantum: scarica Capacitor
-npm run apk      # compila → android/app/build/outputs/apk/debug/app-debug.apk
+npm run apk        # compila → android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Quando cambi qualcosa nei file dell'app, ricompila con `npm run apk` e trasferisci di nuovo l'APK.
+Lo script `build-apk.sh` trova da solo Java 21 e lo SDK Android, copia i file dell'app
+e lancia Gradle. La prima compilazione richiede qualche minuto (scarica Gradle),
+le successive vanno molto più veloci.
+
+Quando cambi qualcosa nei file dell'app (`js/`, `css/`, `index.html`…), ricompila con
+`npm run apk` e trasferisci di nuovo l'APK sul telefono.
 
 > Nota: nell'APK e nella PWA i dati sono salvati nel dispositivo, separati da quelli del browser.
 > Usa ⬇️ **Esporta** / ⬆️ **Importa** per spostarli.
