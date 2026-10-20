@@ -45,6 +45,7 @@
       <h1 id="page-title">Dashboard</h1>
       <div class="topbar-actions">
         <span id="sync-state" class="sync-state" title="" hidden></span>
+        <button class="btn btn-ghost" data-action="settings" title="Impostazioni">⚙️ <span class="hide-sm">Impostazioni</span></button>
         <button class="btn btn-ghost" data-action="export" title="Scarica un backup dei tuoi dati">⬇️ <span class="hide-sm">Esporta</span></button>
         <button class="btn btn-ghost" id="btn-lock" data-action="lock-app" title="Blocca l'app con il PIN" hidden>🔒</button>
         <button class="btn btn-primary" data-action="add-item">＋ Nuovo articolo</button>
@@ -92,27 +93,19 @@
   </div>
 </div>
 
-<div id="lock-screen" class="lock-screen" hidden>
+<div id="lock-screen" class="lock-screen lock-over" hidden>
   <div class="lock-card">
+    <button class="icon-btn lock-x" id="lock-offline" data-action="close-offline" aria-label="Chiudi">✕</button>
     <div class="lock-logo">🏷️</div>
     <h2 id="lock-title">Resellio</h2>
-    <p id="lock-msg" class="lock-msg">Inserisci il PIN per sbloccare 🔒</p>
-    <div class="pin-dots" id="pin-dots"></div>
-    <div class="keypad">
-      <button class="key" data-key="1">1</button>
-      <button class="key" data-key="2">2</button>
-      <button class="key" data-key="3">3</button>
-      <button class="key" data-key="4">4</button>
-      <button class="key" data-key="5">5</button>
-      <button class="key" data-key="6">6</button>
-      <button class="key" data-key="7">7</button>
-      <button class="key" data-key="8">8</button>
-      <button class="key" data-key="9">9</button>
-      <button class="key key-fn" data-key="del" aria-label="Cancella">⌫</button>
-      <button class="key" data-key="0">0</button>
-      <button class="key key-ok" data-key="ok" disabled>OK</button>
-    </div>
-    <button class="lock-forgot" data-key="forgot">Hai dimenticato il PIN?</button>
+    <p id="lock-msg" class="lock-msg">Inserisci la password per entrare 🔒</p>
+    <form id="lock-form" class="login-form">
+      <input class="input" type="password" id="lock-pw" placeholder="Password"
+             autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn btn-primary" type="submit">🔓 Entra</button>
+    </form>
+    <button class="lock-forgot" id="lock-forgot" type="button">Hai dimenticato la password?</button>
+    <button class="lock-forgot" id="lock-alt" data-action="close-offline" type="button">← Accedi con l'account</button>
   </div>
 </div>
 

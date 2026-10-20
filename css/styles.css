@@ -503,6 +503,8 @@ body.locked{overflow:hidden}
   padding:20px;
 }
 .lock-screen[hidden]{display:none}
+.lock-over{background:rgba(8,33,35,.9)}
+.lock-x{position:absolute;top:10px;right:10px;color:var(--ink-soft)}
 .lock-card{
   width:100%;max-width:330px;background:var(--surface);border-radius:24px;
   padding:26px 22px 20px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.35);

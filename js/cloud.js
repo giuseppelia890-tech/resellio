@@ -160,13 +160,15 @@ const Cloud = (() => {
       if (e.target.closest('#btn-google')) { google(); return; }
       if (e.target.closest('#btn-register')) { toggleMode(); return; }
       if (e.target.closest('#btn-reset')) { resetPassword(field('email')); return; }
-      if (e.target.closest('#btn-offline')) { hide(); Auth.lock(); return; }
+      if (e.target.closest('#btn-offline')) { Auth.lock(); return; }
     });
     ui.form.addEventListener('submit', e => {
       e.preventDefault();
       const email = field('email'), password = field('password');
       if (!email || !password) { Utils.toast('Compila email e password', 'err'); return; }
-      emailLogin(email, password, ui.mode === 'register');
+      const reg = ui.mode === 'register';
+      if (reg && password.length < 6) { Utils.toast('La password deve avere almeno 6 caratteri', 'err'); return; }
+      emailLogin(email, password, reg);
     });
   }
 
@@ -193,9 +195,12 @@ const Cloud = (() => {
     ui.screen.hidden = false;
     document.body.classList.add('locked');
   }
+
   function hide() {
     if (ui.screen) ui.screen.hidden = true;
-    document.body.classList.remove('locked');
+    /* se il blocco password è a sua volta aperto, non tolgo lo sfondo */
+    const lock = document.getElementById('lock-screen');
+    if (!lock || lock.hidden) document.body.classList.remove('locked');
   }
 
   /* Schermata breve durante il primo controllo dell'account */

@@ -113,25 +113,25 @@ Resellio può avere un **account vero**, con accesso via **Google** o **email e 
 
 > Per attivare l'account serve creare un progetto gratuito su Firebase (5 minuti):
 > le istruzioni passo passo sono in cima a `js/firebase-config.js`.
-> Finché non è configurato, Resellio funziona come prima (solo con il PIN).
+> Finché non è configurato, Resellio funziona come prima: blocco locale con password.
 
 ### Come funziona senza internet
 
 - sei già entrato prima → l'app si apre lo stesso (l'accesso viene ricordato)
-- mai entrato e sei offline → puoi entrare con il **PIN**, se l'hai impostato
+- mai entrato e sei offline → puoi entrare con la **password locale**, se l'hai impostata
 - i dati si modificano anche offline e vengono inviati online alla connessione successiva
 
-## 🔒 Blocco con PIN
+## 🔒 Blocco con password
 
-Da ⚙️ **Impostazioni** puoi attivare un **PIN di accesso** (da 4 a 8 cifre):
+Da ⚙️ **Impostazioni** puoi attivare una **password di accesso** (almeno 4 caratteri):
 
-- all'apertura dell'app appare una schermata con tastierino numerico
-- il PIN si sblocca anche **offline** ed è lo stesso nella PWA e nell'APK del singolo dispositivo
-- il PIN si resetta **chiudendo l'app**: ogni volta che la riapri lo chiede di nuovo
-- serve a tenere fuori mani curiose dal tuo telefono: **non è un account** e non c'è un server
-  che possa recuperarlo. Se lo dimentichi, l'unica via è toglierlo dalla schermata stessa
-  ("Hai dimenticato il PIN?") — i dati restano al loro posto
-- il PIN **non** finisce nei backup esportati
+- all'apertura dell'app appare la schermata di blocco con il campo password
+- funziona anche **offline** ed è **uguale** nella versione web e nell'APK
+- la password si resetta **chiudendo l'app**: ogni volta che la riapri te la chiede
+- serve a tenere fuori mani curiose dal tuo telefono: **non è un account** e non c'è
+  un server che possa recuperarla. Se la dimentichi, l'unica via è toglierla dalla
+  schermata stessa ("Hai dimenticato la password?") — i dati restano al loro posto
+- la password **non** finisce nei backup esportati
 
 ## ⚙️ Impostazioni
 
@@ -141,7 +141,8 @@ Da ⚙️ **Impostazioni** puoi regolare:
 - **Margine default %** usato dal calcolatore
 - **Arrotondamento prezzi** (.99, .95 o esatto)
 - **Nota spedizione** predefinita degli annunci
-- **🔒 Accesso con PIN**: attiva, cambia o togli il blocco (vedi sopra)
+- **🔒 Blocco con password**: attiva, cambia o togli la password (vedi sopra)
+- **👤 Account online**: sincronizza ora o esci dall'account
 
 ## 💾 Backup e ripristino
 

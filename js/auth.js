@@ -1,14 +1,14 @@
-/* ===== Resellio — accesso con PIN ===== */
+/* ===== Resellio — blocco con password ===== */
 const Auth = (() => {
-  const KEY = 'resellio_auth';           // hash del PIN (localStorage, fuori dal backup)
-  const SESSION = 'resellio_auth_ok';    // flag di sblocco (sessionStorage: si azzera chiudendo l'app)
-  const MIN = 4, MAX = 8;
+  const KEY = 'resellio_auth';           // hash della password (localStorage, fuori dal backup)
+  const SESSION = 'resellio_auth_ok';    // sblocco (sessionStorage: si azzera chiudendo l'app)
+  const MIN = 4;
 
-  /* --- Hash del PIN ---
-     Usa SHA-256 quando disponibile; in file:// o WebView vecchie usa un hash semplice.
+  /* --- Hash della password ---
+     SHA-256 quando disponibile; in file:// o WebView vecchie un hash semplice.
      Non è sicurezza da banca: serve a tenere fuori mani curiose, e funziona offline. */
-  async function hash(pin) {
-    const txt = 'resellio-pin:' + pin;
+  async function hash(pw) {
+    const txt = 'resellio-pw:' + pw;
     try {
       if (window.crypto && crypto.subtle) {
         const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(txt));
@@ -20,31 +20,33 @@ const Auth = (() => {
     return 'f' + h.toString(16);
   }
 
-  function pinSet() { try { return !!localStorage.getItem(KEY); } catch (e) { return false; } }
+  function lockSet() { try { return !!localStorage.getItem(KEY); } catch (e) { return false; } }
   function unlocked() { try { return sessionStorage.getItem(SESSION) === '1'; } catch (e) { return true; } }
   function unlock() { try { sessionStorage.setItem(SESSION, '1'); } catch (e) { /* niente */ } }
 
-  async function setPin(pin) {
-    try { localStorage.setItem(KEY, await hash(pin)); }
-    catch (e) { Utils.toast('Impossibile salvare il PIN', 'err'); }
+  async function setLock(pw) {
+    try { localStorage.setItem(KEY, await hash(pw)); return true; }
+    catch (e) { Utils.toast('Impossibile salvare la password', 'err'); return false; }
   }
-  function removePin() { try { localStorage.removeItem(KEY); } catch (e) { /* niente */ } }
-  async function verify(pin) {
+  function removeLock() { try { localStorage.removeItem(KEY); } catch (e) { /* niente */ } }
+  async function verify(pw) {
     let saved = null;
     try { saved = localStorage.getItem(KEY); } catch (e) { return false; }
     if (!saved) return false;
-    return (await hash(pin)) === saved;
+    return (await hash(pw)) === saved;
   }
 
-  /* --- Schermata di blocco (tastierino numerico) --- */
+  /* --- Schermata di blocco --- */
   let mode = 'unlock';   // unlock | create | confirm
-  let buffer = '', firstPin = '', fails = 0, busy = false;
+  let input = '', first = '', fails = 0, busy = false;
   const el = {};
 
   function cacheEls() {
     el.screen = document.getElementById('lock-screen');
     el.title = document.getElementById('lock-title');
     el.msg = document.getElementById('lock-msg');
+    el.pw = document.getElementById('lock-pw');
+    el.alt = document.getElementById('lock-alt');
     el.card = el.screen && el.screen.querySelector('.lock-card');
   }
 
@@ -53,14 +55,7 @@ const Auth = (() => {
     if (el.msg) el.msg.textContent = msg;
   }
 
-  function drawDots() {
-    if (!el.screen) return;
-    let html = '';
-    for (let i = 0; i < MAX; i++) html += `<span class="dot${i < buffer.length ? ' on' : ''}"></span>`;
-    el.screen.querySelector('#pin-dots').innerHTML = html;
-    const ok = el.screen.querySelector('[data-key="ok"]');
-    if (ok) ok.disabled = buffer.length < MIN || busy;
-  }
+  function visible() { return !!(el.screen && !el.screen.hidden); }
 
   function shake() {
     if (!el.card) return;
@@ -69,128 +64,136 @@ const Auth = (() => {
     el.card.classList.add('shake');
   }
 
-  function visible() { return !!(el.screen && !el.screen.hidden); }
-
-  function press(k) {
-    if (busy || !visible()) return;
-    if (k === 'del') { buffer = buffer.slice(0, -1); drawDots(); return; }
-    if (k === 'ok') { submit(); return; }
-    if (k === 'forgot') { forgot(); return; }
-    if (!/^[0-9]$/.test(k) || buffer.length >= MAX) return;
-    buffer += k;
-    drawDots();
-    if (buffer.length === MAX) submit();
+  function modeMsg() {
+    if (mode === 'create') return { t: 'Crea la tua password', m: `Almeno ${MIN} caratteri` };
+    if (mode === 'confirm') return { t: 'Conferma la password', m: 'Ripeti la stessa password' };
+    return { t: 'Resellio', m: 'Inserisci la password per entrare 🔒' };
   }
 
   async function submit() {
     if (busy) return;
-    if (buffer.length < MIN) { shake(); setMsg(modeMsg().t, `Almeno ${MIN} cifre`); return; }
+    const val = el.pw ? el.pw.value : '';
+    if (val.length < MIN) {
+      shake(); setMsg(modeMsg().t, `Almeno ${MIN} caratteri`);
+      if (el.pw) el.pw.focus();
+      return;
+    }
 
     if (mode === 'create') {
-      firstPin = buffer; buffer = ''; mode = 'confirm';
-      setMsg('Conferma il PIN', 'Ripeti le stesse cifre'); drawDots();
+      first = val;
+      if (el.pw) { el.pw.value = ''; el.pw.focus(); }
+      mode = 'confirm';
+      setMsg(modeMsg().t, modeMsg().m);
       return;
     }
 
     if (mode === 'confirm') {
-      if (buffer !== firstPin) {
-        buffer = ''; firstPin = ''; mode = 'create'; drawDots(); shake();
-        setMsg('Crea il tuo PIN', 'I due PIN non coincidono: ricomincia');
+      if (val !== first) {
+        input = ''; first = ''; mode = 'create';
+        if (el.pw) { el.pw.value = ''; el.pw.focus(); }
+        shake();
+        setMsg('Crea la tua password', 'Le due password non coincidono: ricomincia');
         return;
       }
       busy = true;
-      await setPin(buffer);
+      await setLock(val);
       busy = false;
-      unlock(); hide();
+      if (el.pw) el.pw.value = '';
+      unlock();
+      hide();
       updateLockButton();
-      Utils.toast('PIN attivo: l\'app ora si sblocca con il tuo PIN 🔒', 'ok');
+      Utils.toast('Password attiva: l\'app ora si apre solo con quella 🔒', 'ok');
       return;
     }
 
+    /* sblocco */
     busy = true;
-    const okPin = await verify(buffer);
+    const ok = await verify(val);
     busy = false;
-    buffer = ''; drawDots();
-    if (okPin) { fails = 0; unlock(); hide(); return; }
+    if (el.pw) el.pw.value = '';
+    if (ok) { fails = 0; unlock(); hide(); return; }
     fails++; shake();
-    setMsg('Resellio', 'PIN errato, riprova');
+    setMsg('Resellio', 'Password errata, riprova');
+    if (el.pw) el.pw.focus();
     if (fails >= 3) {
-      busy = true; drawDots();
+      busy = true;
       const sec = Math.min(fails - 2, 5);
       setMsg('Resellio', `Attendi ${sec} secondi…`);
-      setTimeout(() => { busy = false; drawDots(); setMsg('Resellio', 'Inserisci il PIN per sbloccare 🔒'); }, sec * 1000);
+      setTimeout(() => { busy = false; setMsg('Resellio', 'Inserisci la password per entrare 🔒'); }, sec * 1000);
     }
   }
 
-  function modeMsg() {
-    if (mode === 'create') return { t: 'Crea il tuo PIN', m: `Scegli da ${MIN} a ${MAX} cifre` };
-    if (mode === 'confirm') return { t: 'Conferma il PIN', m: 'Ripeti le stesse cifre' };
-    return { t: 'Resellio', m: 'Inserisci il PIN per sbloccare 🔒' };
-  }
-
-  /* PIN dimenticato: l'unica via senza un server è togliere il lock (i dati restano) */
   function forgot() {
-    Modals.confirm('Senza un server non posso recuperare il PIN. Vuoi toglierlo e tornare subito dentro? I dati restano al loro posto, ma l\'app tornerà aperta a chiunque usi questo dispositivo.', { okLabel: 'Togli il PIN e entra', danger: true })
+    Modals.confirm('Senza un server non posso recuperare la password. Vuoi toglierla e tornare subito dentro? I dati restano al loro posto, ma l\'app tornerà aperta a chiunque usi questo dispositivo.', { okLabel: 'Togli la password e entra' })
       .then(ok => {
         if (!ok) return;
-        removePin();
+        removeLock();
         fails = 0;
-        unlock(); hide(); updateLockButton();
-        Utils.toast('PIN rimosso. Ne puoi impostare uno nuovo da Impostazioni ⚙️');
+        unlock();
+        hide();
+        updateLockButton();
+        Utils.toast('Password rimossa. Ne puoi impostare una nuova da Impostazioni ⚙️');
       });
+  }
+
+  /* La schermata può essere condivisa con l'accesso online: lì ho già la mia X */
+  function syncAlt() {
+    if (!el.alt) return;
+    const acc = (typeof Cloud !== 'undefined' && Cloud.active() && !Cloud.user);
+    el.alt.hidden = (mode === 'unlock') && acc;   // con l'account c'è "Accedi con l'account"
   }
 
   function show(m) {
     cacheEls();
     if (!el.screen) return;
     mode = m || 'unlock';
-    buffer = ''; firstPin = ''; busy = false;
+    input = ''; first = ''; busy = false;
+    if (el.pw) el.pw.value = '';
     const msg = modeMsg();
     setMsg(msg.t, msg.m);
+    if (el.pw) el.pw.setAttribute('placeholder', mode === 'unlock' ? 'Password' : 'Nuova password');
     el.screen.hidden = false;
     document.body.classList.add('locked');
-    drawDots();
+    syncAlt();
+    if (el.pw) setTimeout(() => el.pw.focus(), 80);
   }
 
   function hide() {
     if (el.screen) el.screen.hidden = true;
-    document.body.classList.remove('locked');
+    if (!(typeof Cloud !== 'undefined' && Cloud.active() && !Cloud.user)) {
+      document.body.classList.remove('locked');
+    }
   }
 
   function updateLockButton() {
     const b = document.getElementById('btn-lock');
-    if (b) b.hidden = !pinSet();
-  }
-
-  function onKey(e) {
-    if (!visible()) return;
-    if (/^[0-9]$/.test(e.key)) { press(e.key); e.preventDefault(); }
-    else if (e.key === 'Backspace') { press('del'); e.preventDefault(); }
-    else if (e.key === 'Enter') { press('ok'); e.preventDefault(); }
+    if (b) b.hidden = !lockSet();
   }
 
   function start() {
     cacheEls();
     if (el.screen) {
       el.screen.addEventListener('click', e => {
-        const b = e.target.closest('[data-key]');
-        if (b) press(b.dataset.key);
+        if (e.target.closest('#lock-forgot')) { forgot(); return; }
       });
-      document.addEventListener('keydown', onKey);
+      const form = document.getElementById('lock-form');
+      if (form) {
+        form.addEventListener('submit', e => { e.preventDefault(); submit(); });
+      }
     }
     updateLockButton();
   }
 
-  /* Ingresso quando NON c'è l'account online (Firebase non configurato): PIN a ogni apertura */
+  /* Ingresso quando NON c'è l'account online: password a ogni apertura */
   function entry() {
-    if (pinSet() && !unlocked()) show('unlock');
+    if (lockSet() && !unlocked()) show('unlock');
   }
 
   return {
-    start, entry, pinSet, unlocked, unlock, updateLockButton,
+    start, entry, lockSet, unlocked, unlock, updateLockButton,
     hideLock() { hide(); },
     lock() { fails = 0; show('unlock'); },
     startSetup() { fails = 0; show('create'); },
-    remove() { removePin(); updateLockButton(); },
+    remove() { removeLock(); updateLockButton(); },
   };
 })();

@@ -215,6 +215,11 @@ const App = (() => {
         Modals.close();
         Auth.lock();
         break;
+      case 'close-offline':
+        Cloud.hide();
+        Auth.hideLock();
+        Cloud.show();
+        break;
       case 'sync-now':
         Modals.close();
         Cloud.pushNow().then(ok => { if (ok) Utils.toast('Backup online aggiornato ☁️', 'ok'); });

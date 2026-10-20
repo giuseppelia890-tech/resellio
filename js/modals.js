@@ -424,15 +424,15 @@ const Modals = (() => {
         </div>
         <div class="settings-extra">
           <div class="pin-row">
-            <strong>🔒 Accesso con PIN</strong>
-            <span class="hint">${Auth.pinSet() ? 'attivo su questo dispositivo' : 'non attivo'}</span>
+            <strong>🔒 Blocco con password</strong>
+            <span class="hint">${Auth.lockSet() ? 'attivo su questo dispositivo' : 'non attivo'}</span>
           </div>
-          ${Auth.pinSet()
-            ? `<button class="btn btn-ghost btn-sm" data-action="pin-setup">🔑 Cambia PIN</button>
+          ${Auth.lockSet()
+            ? `<button class="btn btn-ghost btn-sm" data-action="pin-setup">🔑 Cambia password</button>
                <button class="btn btn-ghost btn-sm" data-action="lock-app">🔒 Blocca subito</button>
-               <button class="btn btn-ghost btn-sm" data-action="pin-remove" style="color:var(--danger)">Togli il PIN</button>`
-            : `<button class="btn btn-ghost btn-sm" data-action="pin-setup">🔑 Imposta un PIN</button>
-               <p class="hint">Alla prossima apertura l\'app chiederà il PIN (da 4 a 8 cifre). Funziona anche offline: è un lucchetto per il tuo dispositivo, non un account.</p>`}
+               <button class="btn btn-ghost btn-sm" data-action="pin-remove" style="color:var(--danger)">Togli la password</button>`
+            : `<button class="btn btn-ghost btn-sm" data-action="pin-setup">🔑 Imposta una password</button>
+               <p class="hint">Alla prossima apertura l&#39;app chiederà la password (almeno 4 caratteri). Funziona anche offline: è un lucchetto per il tuo dispositivo, non un account.</p>`}
         </div>
         <div class="settings-extra">
           <div class="pin-row">
