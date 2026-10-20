@@ -76,7 +76,14 @@ Un'app Android vera e propria, installabile trasferendo il file `.apk` sul telef
 (via cavo, email, WhatsApp, AirDrop…). Da Android: apri il file e consenti le installazioni
 da origini sconosciute.
 
-Per compilarlo (una tantum ho già preparato tutto su questo Mac):
+**APK già compilato, pronto da scaricare sul telefono:**
+
+👉 **https://github.com/giuseppelia890-tech/resellio/releases/latest/download/app-debug.apk**
+
+(apri l'indirizzo dal browser del telefono, poi apri il file scaricato e consenti
+l'installazione da "origini sconosciute" quando te lo chiede)
+
+Per ricompilarlo da zero (per esempio dopo aver cambiato qualcosa nei file dell'app):
 
 ```bash
 cd resellio
