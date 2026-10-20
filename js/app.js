@@ -210,6 +210,23 @@ const App = (() => {
       }
 
       case 'settings': Modals.settings(); break;
+
+      case 'lock-app':
+        Modals.close();
+        Auth.lock();
+        break;
+      case 'pin-setup':
+        Modals.close();
+        Auth.startSetup();
+        break;
+      case 'pin-remove':
+        Modals.confirm('Togliere il PIN? Chiunque usi questo dispositivo potrà aprire l\'app e vedere tutti i dati.', { okLabel: 'Togli il PIN' }).then(ok => {
+          if (!ok) return;
+          Auth.remove();
+          Utils.toast('PIN rimosso');
+        });
+        break;
+
       case 'export':
         Utils.download('resellio-backup-' + Utils.today() + '.json', Store.exportJSON());
         Utils.toast('Backup scaricato ⬇️', 'ok');
@@ -284,6 +301,7 @@ const App = (() => {
     window.addEventListener('hashchange', render);
     if (!location.hash) location.hash = '#/dashboard';
     render();
+    Auth.start();
     registerSW();
   }
 

@@ -494,3 +494,56 @@ body.modal-open{overflow:hidden}
   .deals-grid{grid-template-columns:1fr}
   .photo-row{flex-direction:column}
 }
+
+/* ===== Schermata di blocco (PIN) ===== */
+body.locked{overflow:hidden}
+.lock-screen{
+  position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(120% 120% at 50% 0%, #12494c 0%, #0d2f31 55%, #082123 100%);
+  padding:20px;
+}
+.lock-screen[hidden]{display:none}
+.lock-card{
+  width:100%;max-width:330px;background:var(--surface);border-radius:24px;
+  padding:26px 22px 20px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.35);
+}
+.lock-card.shake{animation:lock-shake .4s}
+@keyframes lock-shake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-9px)}40%{transform:translateX(9px)}
+  60%{transform:translateX(-6px)}80%{transform:translateX(6px)}
+}
+.lock-logo{font-size:40px;line-height:1;margin-bottom:8px}
+.lock-card h2{margin:0 0 4px;font-size:21px}
+.lock-msg{margin:0 0 16px;color:var(--ink-soft);font-size:13.5px;min-height:36px}
+.pin-dots{display:flex;justify-content:center;gap:10px;margin-bottom:18px}
+.pin-dots .dot{
+  width:13px;height:13px;border-radius:50%;border:2px solid var(--line);
+  background:var(--surface);transition:background .12s, border-color .12s, transform .12s;
+}
+.pin-dots .dot.on{background:var(--brand);border-color:var(--brand);transform:scale(1.12)}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}
+.key{
+  appearance:none;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);
+  font-family:var(--font);font-size:20px;font-weight:700;padding:13px 0;border-radius:14px;
+  cursor:pointer;transition:background .1s, transform .05s;user-select:none;
+}
+.key:hover{background:var(--brand-soft)}
+.key:active{transform:scale(.94)}
+.key-fn{background:transparent;border-color:transparent;font-size:18px}
+.key-fn:hover{background:var(--danger-soft);color:var(--danger)}
+.key-ok{background:var(--brand);border-color:var(--brand);color:#fff;font-size:15px;letter-spacing:.04em}
+.key-ok:hover{background:var(--brand-dark)}
+.key:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.lock-forgot{
+  appearance:none;border:0;background:none;color:var(--ink-soft);
+  font-family:var(--font);font-size:12.5px;text-decoration:underline;cursor:pointer;padding:4px;
+}
+.lock-forgot:hover{color:var(--danger)}
+.pin-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.pin-row strong{font-size:14px}
+@media (max-width:560px){
+  .lock-card{padding:22px 18px 16px}
+  .key{padding:12px 0;font-size:19px}
+}
+.settings-extra .pin-row{flex:1 1 100%}

@@ -422,6 +422,18 @@ const Modals = (() => {
           <button class="btn btn-ghost btn-sm" data-action="load-sample">✨ Dati di esempio</button>
           <button class="btn btn-ghost btn-sm" data-action="reset-data" style="color:var(--danger)">🗑️ Svuota tutto</button>
         </div>
+        <div class="settings-extra">
+          <div class="pin-row">
+            <strong>🔒 Accesso con PIN</strong>
+            <span class="hint">${Auth.pinSet() ? 'attivo su questo dispositivo' : 'non attivo'}</span>
+          </div>
+          ${Auth.pinSet()
+            ? `<button class="btn btn-ghost btn-sm" data-action="pin-setup">🔑 Cambia PIN</button>
+               <button class="btn btn-ghost btn-sm" data-action="lock-app">🔒 Blocca subito</button>
+               <button class="btn btn-ghost btn-sm" data-action="pin-remove" style="color:var(--danger)">Togli il PIN</button>`
+            : `<button class="btn btn-ghost btn-sm" data-action="pin-setup">🔑 Imposta un PIN</button>
+               <p class="hint">Alla prossima apertura l\'app chiederà il PIN (da 4 a 8 cifre). Funziona anche offline: è un lucchetto per il tuo dispositivo, non un account.</p>`}
+        </div>
         <p class="hint">I dati sono salvati solo nel browser di questo dispositivo: esporta un backup periodicamente.</p>
       </div>
       <div class="modal-foot">

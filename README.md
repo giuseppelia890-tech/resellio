@@ -93,6 +93,18 @@ Quando cambi qualcosa nei file dell'app (`js/`, `css/`, `index.html`…), ricomp
 > Nota: nell'APK e nella PWA i dati sono salvati nel dispositivo, separati da quelli del browser.
 > Usa ⬇️ **Esporta** / ⬆️ **Importa** per spostarli.
 
+## 🔒 Blocco con PIN
+
+Da ⚙️ **Impostazioni** puoi attivare un **PIN di accesso** (da 4 a 8 cifre):
+
+- all'apertura dell'app appare una schermata con tastierino numerico
+- il PIN si sblocca anche **offline** ed è lo stesso nella PWA e nell'APK del singolo dispositivo
+- il PIN si resetta **chiudendo l'app**: ogni volta che la riapri lo chiede di nuovo
+- serve a tenere fuori mani curiose dal tuo telefono: **non è un account** e non c'è un server
+  che possa recuperarlo. Se lo dimentichi, l'unica via è toglierlo dalla schermata stessa
+  ("Hai dimenticato il PIN?") — i dati restano al loro posto
+- il PIN **non** finisce nei backup esportati
+
 ## ⚙️ Impostazioni
 
 Da ⚙️ **Impostazioni** puoi regolare:
@@ -101,6 +113,7 @@ Da ⚙️ **Impostazioni** puoi regolare:
 - **Margine default %** usato dal calcolatore
 - **Arrotondamento prezzi** (.99, .95 o esatto)
 - **Nota spedizione** predefinita degli annunci
+- **🔒 Accesso con PIN**: attiva, cambia o togli il blocco (vedi sopra)
 
 ## 💾 Backup e ripristino
 
