@@ -59,6 +59,7 @@ const Store = (() => {
   function save() {
     try {
       localStorage.setItem(KEY, JSON.stringify(state));
+      if (typeof Cloud !== 'undefined') Cloud.schedulePush();   // backup online (se attivo)
       return true;
     } catch (e) {
       Utils.toast('Spazio esaurito: elimina alcune foto o esporta un backup', 'err');

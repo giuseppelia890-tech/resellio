@@ -215,6 +215,14 @@ const App = (() => {
         Modals.close();
         Auth.lock();
         break;
+      case 'sync-now':
+        Modals.close();
+        Cloud.pushNow().then(ok => { if (ok) Utils.toast('Backup online aggiornato ☁️', 'ok'); });
+        break;
+      case 'logout':
+        Modals.close();
+        Cloud.logout();
+        break;
       case 'pin-setup':
         Modals.close();
         Auth.startSetup();
@@ -299,10 +307,29 @@ const App = (() => {
     document.addEventListener('change', onChange);
     document.addEventListener('keydown', e => { if (e.key === 'Escape') Modals.close(); });
     window.addEventListener('hashchange', render);
+    window.addEventListener('online', () => { if (Cloud.user) Cloud.pullMerge(); });
     if (!location.hash) location.hash = '#/dashboard';
     render();
     Auth.start();
+    Cloud.uiInit();
+    if (Cloud.configured()) Cloud.bootShow();
+    if (!Cloud.init(onAuthState)) Auth.entry();   // Firebase non configurato → solo PIN
     registerSW();
+  }
+
+  /* Come si apre l'app: account online ricordato, altrimenti login, oppure PIN se offline */
+  function onAuthState(user) {
+    Cloud.bootHide();
+    if (user) {
+      Auth.hideLock();
+      Cloud.hide();
+      Auth.updateLockButton();
+      Cloud.pullMerge();
+      return;
+    }
+    if (!Cloud.active()) { Auth.entry(); return; }
+    if (!navigator.onLine && Auth.pinSet()) { Auth.lock(); return; }
+    Cloud.show(navigator.onLine ? 'Accedi per continuare' : 'Serve internet per la prima connessione', Auth.pinSet());
   }
 
   /* --- PWA: service worker per funzionare offline e installare su Android --- */

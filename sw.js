@@ -1,5 +1,5 @@
 /* ===== Resellio — service worker: funziona anche offline ===== */
-const CACHE = 'resellio-v2';
+const CACHE = 'resellio-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -12,12 +12,18 @@ const ASSETS = [
   './js/views.js',
   './js/modals.js',
   './js/auth.js',
+  './js/cloud.js',
+  './js/firebase-config.js',
   './js/app.js',
   './icons/icon.svg',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
   './icons/apple-touch-icon.png',
+  // SDK Firebase: senza rete non servono, ma così l'app non si rompe in offline
+  'https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js',
+  'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js',
+  'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js',
 ];
 
 self.addEventListener('install', e => {

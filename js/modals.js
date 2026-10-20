@@ -434,6 +434,19 @@ const Modals = (() => {
             : `<button class="btn btn-ghost btn-sm" data-action="pin-setup">🔑 Imposta un PIN</button>
                <p class="hint">Alla prossima apertura l\'app chiederà il PIN (da 4 a 8 cifre). Funziona anche offline: è un lucchetto per il tuo dispositivo, non un account.</p>`}
         </div>
+        <div class="settings-extra">
+          <div class="pin-row">
+            <strong>👤 Account online</strong>
+            <span class="hint">${typeof Cloud !== 'undefined' && Cloud.user ? esc(Cloud.user.email || 'Google') : 'non connesso'}</span>
+          </div>
+          ${typeof Cloud !== 'undefined' && Cloud.user
+            ? `<button class="btn btn-ghost btn-sm" data-action="sync-now">☁️ Sincronizza ora</button>
+               <button class="btn btn-ghost btn-sm" data-action="logout">Esci dall'account</button>
+               <p class="hint">I dati restano su questo dispositivo e vengono copiati anche online: se cambi telefono li ritrovi accedendo con lo stesso account.</p>`
+            : `<p class="hint">${typeof Cloud !== 'undefined' && Cloud.configured()
+                ? 'Accedi dalla schermata iniziale con Google o email per attivare il backup online.'
+                : 'Per attivare l\'accesso con Google/email e il backup online serve configurare Firebase (vedi js/firebase-config.js).'}</p>`}
+        </div>
         <p class="hint">I dati sono salvati solo nel browser di questo dispositivo: esporta un backup periodicamente.</p>
       </div>
       <div class="modal-foot">

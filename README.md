@@ -100,6 +100,27 @@ Quando cambi qualcosa nei file dell'app (`js/`, `css/`, `index.html`…), ricomp
 > Nota: nell'APK e nella PWA i dati sono salvati nel dispositivo, separati da quelli del browser.
 > Usa ⬇️ **Esporta** / ⬆️ **Importa** per spostarli.
 
+## 👤 Account online (Google o email)
+
+Resellio può avere un **account vero**, con accesso via **Google** o **email e password**:
+
+- all'apertura appare la schermata di accesso: un click su **Continua con Google** e sei dentro
+- puoi anche creare un account con email e password, o recuperare la password dimenticata
+- una volta entrato, **resti dentro**: non serve rifare l'accesso a ogni apertura
+- i dati restano sempre salvati sul dispositivo, ma vengono **copiati anche online**:
+  se cambi telefono basta accedere con lo stesso account per ritrovarli
+- l'indicatore **☁️** in alto mostra lo stato del backup
+
+> Per attivare l'account serve creare un progetto gratuito su Firebase (5 minuti):
+> le istruzioni passo passo sono in cima a `js/firebase-config.js`.
+> Finché non è configurato, Resellio funziona come prima (solo con il PIN).
+
+### Come funziona senza internet
+
+- sei già entrato prima → l'app si apre lo stesso (l'accesso viene ricordato)
+- mai entrato e sei offline → puoi entrare con il **PIN**, se l'hai impostato
+- i dati si modificano anche offline e vengono inviati online alla connessione successiva
+
 ## 🔒 Blocco con PIN
 
 Da ⚙️ **Impostazioni** puoi attivare un **PIN di accesso** (da 4 a 8 cifre):

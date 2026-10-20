@@ -179,11 +179,16 @@ const Auth = (() => {
       document.addEventListener('keydown', onKey);
     }
     updateLockButton();
+  }
+
+  /* Ingresso quando NON c'è l'account online (Firebase non configurato): PIN a ogni apertura */
+  function entry() {
     if (pinSet() && !unlocked()) show('unlock');
   }
 
   return {
-    start, pinSet, unlocked, unlock,
+    start, entry, pinSet, unlocked, unlock, updateLockButton,
+    hideLock() { hide(); },
     lock() { fails = 0; show('unlock'); },
     startSetup() { fails = 0; show('create'); },
     remove() { removePin(); updateLockButton(); },
