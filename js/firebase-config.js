@@ -20,10 +20,10 @@
  *  PIN e con i dati salvati sul dispositivo.
  */
 window.FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: "",
+  apiKey: "AIzaSyBRzwEZxDYwEi2F8JuDXaSsmkeCyQGIe3A",
+  authDomain: "reselio-65227.firebaseapp.com",
+  projectId: "reselio-65227",
+  storageBucket: "reselio-65227.firebasestorage.app",
+  messagingSenderId: "44155586970",
+  appId: "1:44155586970:web:c0fadeb1749426ffb41223",
 };
