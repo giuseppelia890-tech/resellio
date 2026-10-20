@@ -3,6 +3,7 @@ const CACHE = 'resellio-v3';
 const ASSETS = [
   './',
   './index.html',
+  './download.html',
   './manifest.webmanifest',
   './css/styles.css',
   './js/utils.js',

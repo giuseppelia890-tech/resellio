@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Resellio — installa l'app Android</title>
+<meta name="theme-color" content="#0d2f31">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏷️</text></svg>">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="dl-page">
+<main class="dl-wrap">
+  <div class="dl-card">
+    <div class="dl-logo">🏷️</div>
+    <h1>Resellio per Android</h1>
+    <p class="dl-sub">Il gestionale per il reselling su Vinted, come app vera sul telefono.</p>
+
+    <a class="btn btn-primary dl-btn" href="https://github.com/giuseppelia890-tech/resellio/releases/latest/download/app-debug.apk" download>
+      ⬇️ Scarica l'app (APK)
+    </a>
+    <p class="dl-hint" id="dl-hint">Circa 4 MB · Android 6 o successivi</p>
+
+    <div class="dl-steps">
+      <h2>Poi fai così</h2>
+      <ol>
+        <li>Tocca il file scaricato (nella barra delle notifiche o in <b>Download</b>)</li>
+        <li>Se Android lo chiede, consenti le <b>installazioni da origini sconosciute</b> per Chrome</li>
+        <li>Conferma <b>Installa</b></li>
+        <li>Apri Resellio e entra con <b>Google</b> o con email e password</li>
+      </ol>
+    </div>
+
+    <div class="dl-alt">
+      <p>Non riesci a scaricare il file?</p>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/giuseppelia890-tech/resellio/releases/latest">Apri la pagina dei download su GitHub</a>
+      <a class="btn btn-ghost btn-sm" href="./index.html">Usa Resellio dal browser</a>
+    </div>
+
+    <p class="dl-note">Nota: è la versione per uso personale (non passa dal Play Store),
+      quindi Android chiede il permesso la prima volta. È normale.</p>
+  </div>
+</main>
+
+<script>
+  // Il link diretto di GitHub a volte non scarica da telefono: se dopo 2 secondi
+  // non è partito niente, mostro un pulsante alternativo alla pagina del release.
+  const h = document.getElementById('dl-hint');
+  if (h) {
+    const ua = navigator.userAgent;
+    const mobile = /Android|iPhone|iPad|iPod/i.test(ua);
+    h.textContent = mobile
+      ? 'Circa 4 MB · tocca il pulsante e attendi il download'
+      : 'Circa 4 MB · Android 6 o successivi';
+  }
+</script>
+</body>
+</html>
