@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Resellio — Il tuo gestionale per il reselling su Vinted</title>
+<meta name="description" content="Gestisci inventario, prezzi, vendite, acquisti e annunci per il reselling su Vinted. I dati restano sul tuo dispositivo.">
+<meta name="theme-color" content="#0d2f31">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏷️</text></svg>">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">🏷️</div>
+      <div>
+        <div class="brand-name">Resellio</div>
+        <div class="brand-tag">per Vinted</div>
+      </div>
+    </div>
+    <nav class="nav" aria-label="Navigazione principale">
+      <button class="nav-item" data-view="dashboard"><span class="nav-ico">📊</span>Dashboard</button>
+      <button class="nav-item" data-view="inventory"><span class="nav-ico">🧥</span>Inventario</button>
+      <button class="nav-item" data-view="calculator"><span class="nav-ico">🧮</span>Prezzi &amp; profitti</button>
+      <button class="nav-item" data-view="sales"><span class="nav-ico">💰</span>Vendite</button>
+      <button class="nav-item" data-view="shopping"><span class="nav-ico">🛒</span>Lista acquisti</button>
+      <button class="nav-item" data-view="scouting"><span class="nav-ico">🔍</span>Caccia occasioni</button>
+      <button class="nav-item" data-view="generator"><span class="nav-ico">✍️</span>Genera annuncio</button>
+    </nav>
+    <div class="sidebar-foot">
+      <button class="nav-item" data-action="settings"><span class="nav-ico">⚙️</span>Impostazioni</button>
+      <p class="note-small">I tuoi dati restano salvati su questo dispositivo.</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <h1 id="page-title">Dashboard</h1>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost" data-action="export" title="Scarica un backup dei tuoi dati">⬇️ <span class="hide-sm">Esporta</span></button>
+        <button class="btn btn-primary" data-action="add-item">＋ Nuovo articolo</button>
+      </div>
+    </header>
+    <section class="view" id="view"></section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Navigazione mobile">
+    <button class="bottom-item" data-view="dashboard"><span>📊</span><small>Home</small></button>
+    <button class="bottom-item" data-view="inventory"><span>🧥</span><small>Inventario</small></button>
+    <button class="bottom-item" data-view="calculator"><span>🧮</span><small>Prezzi</small></button>
+    <button class="bottom-item" data-view="sales"><span>💰</span><small>Vendite</small></button>
+    <button class="bottom-item" data-view="shopping"><span>🛒</span><small>Acquisti</small></button>
+    <button class="bottom-item" data-view="scouting"><span>🔍</span><small>Caccia</small></button>
+    <button class="bottom-item" data-view="generator"><span>✍️</span><small>Annuncio</small></button>
+  </nav>
+
+</div>
+
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+<input type="file" id="import-file" accept="application/json,.json" hidden>
+
+<script src="js/utils.js"></script>
+<script src="js/store.js"></script>
+<script src="js/generator.js"></script>
+<script src="js/scout.js"></script>
+<script src="js/views.js"></script>
+<script src="js/modals.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

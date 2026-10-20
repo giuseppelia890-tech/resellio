@@ -1,0 +1,110 @@
+# 🏷️ Resellio — il tuo gestionale per il reselling su Vinted
+
+App web personale per comprare, prezziare e vendere su Vinted:
+inventario con foto, calcolo prezzi e profitti, storico vendite,
+lista delle occasioni da comprare e generatore di annunci pronti.
+
+**I tuoi dati restano sul tuo dispositivo** (salvati nel browser),
+nessun account, nessun server, nessuna installazione.
+
+## ▶️ Come si avvia
+
+1. Apri la cartella `resellio`
+2. Fai doppio clic su **`index.html`** → si apre nel browser (Chrome, Safari, Edge…)
+3. Primo utilizzo: premi **✨ Vedi un esempio** per capire come funziona, oppure aggiungi subito il tuo primo articolo
+
+Consiglio: crea un collegamento sulla scrivania o usa la funzione
+"Installa app / Aggiungi a Schermata Home" del browser, così la apri come un'app.
+Per salvare i dati più duraturi conviene aprire l'app dal browser Chromium/Chrome
+(la modalità "incognito" non salva nulla).
+
+## 📦 Cosa contiene
+
+| Sezione | A cosa serve |
+|---|---|
+| 📊 **Dashboard** | Guadagni del mese, profitto potenziale, capitale investito, grafici, ultime vendite |
+| 🧥 **Inventario** | Ogni capo con foto, brand, taglia, condizione, costo, prezzo e stato (Da fotografare → Da pubblicare → In vendita → Venduto) |
+| 🧮 **Prezzi & profitti** | Quanto far pagare: inserisci il costo e il margine, ottieni il prezzo consigliato (con arrotondamento .99), il prezzo di pareggio, il ROI e un confronto tra margini |
+| 💰 **Vendite** | Registra le vendite con 💰: storico con profitto e ROI per articolo, andamento mensile, filtri per periodo |
+| 🛒 **Lista acquisti** | Le occasioni da cogliere (annunci Vinted, venditori privati, mercatini): prezzo chiesto → vendita attesa, priorità, stato della trattativa, e un click per passare l'acquisto all'inventario |
+| 🔍 **Caccia occasioni** | Scrivi cosa vuoi comprare (es. "felpa carhartt"): l'app recupera gli annunci della ricerca Vinted e ti dice per ognuno se **✅ comprare / ⚠️ trattabile / ❌ non conviene**, con guadagno stimato e confronto con la media del mercato. Se il recupero automatico viene bloccato, incolli i risultati copiati e li analizza lo stesso |
+| ✍️ **Genera annuncio** | Compila i dettagli del capo e ottieni titolo ottimizzato (≤60 caratteri), descrizione Vinted pronta e hashtag — con pulsanti "Copia" |
+
+## 🔍 Come funziona la caccia occasioni
+
+1. Nella sezione **🔍 Caccia occasioni** scrivi cosa cerchi e indichi **a quanto pensi di rivendere** quel capo (es. 40€) e il margine che vuoi (es. 40%)
+2. L'app calcola la tua **soglia d'acquisto** (es. 24€) e preme **🔍 Recupera annunci da Vinted**
+3. Per ogni annuncio trovi il verdetto con i motivi:
+   - 🎯 sotto/ sopra la soglia d'acquisto
+   - 💰 guadagno stimato e ROI oppure la perdita se lo compri a quel prezzo
+   - 🔥/📊 se il prezzo è sotto o sopra la **media dei prezzi della ricerca** (il mercato reale)
+4. Quelli buoni li mandi in un click nella **lista acquisti** con prezzo e link già compilati
+
+> Nota: Vinted non offre un'API ufficiale e a volte blocca le richieste automatiche: in quel caso l'app te lo segnala e puoi **incollare i risultati copiati** dalla ricerca (titolo e prezzo per riga) — l'analisi è identica.
+
+## 🔮 Analisi prezzo automatica
+
+Ogni volta che aggiungi un articolo (o un'opportunità nella lista acquisti),
+l'app ti dice subito il prezzo:
+
+- **Nel modale articolo**: appena inserisci il costo di acquisto, vedi il **prezzo suggerito**,
+  i costi totali, il prezzo di pareggio, il profitto e il ROI. Se indichi un prezzo di vendita,
+  ti dice se è un ottimo prezzo, se puoi chiedere di più o se ci perdi — e con un click
+  ✨ **Usa il prezzo suggerito** te lo compila.
+- Se salvi **senza indicare un prezzo di vendita**, l'app lo compila da sola con quello suggerito
+  e te lo dice nel messaggio di conferma.
+- **Nel modale opportunità**: appena indichi a quanto pensi di rivendere, vedi il **massimo
+  che conviene pagare** e, se inserisci il prezzo chiesto, il verdetto ✅ conviene / 🤝 trattabile / ❌ troppo caro.
+
+## 📱 Versione Android
+
+Resellio funziona su Android in due modi, scegli quello che preferisci:
+
+### A) App installabile (PWA) — la più semplice
+
+1. Apri l'indirizzo dell'app in **Chrome** sul telefono
+2. Tocca il **⋮** in alto a destra → **Installa app** (o "Aggiungi a schermata Home")
+3. comparirà l'icona di Resellio sul telefono: si apre a schermo intero e funziona **anche offline**
+   (i dati restano sul telefono, nel suo browser)
+
+### B) File APK vero (Capacitor)
+
+Un'app Android vera e propria, installabile trasferendo il file `.apk` sul telefono
+(via cavo, WhatsApp, email…). Da Android: apri il file e consenti le installazioni da origini sconosciute.
+
+Per compilarlo servono gli strumenti di build (una tantum, ~500MB già pronti su questo Mac):
+
+```bash
+cd resellio
+npm install      # una tantum: scarica Capacitor
+npm run apk      # compila → android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+Quando cambi qualcosa nei file dell'app, ricompila con `npm run apk` e trasferisci di nuovo l'APK.
+
+> Nota: nell'APK e nella PWA i dati sono salvati nel dispositivo, separati da quelli del browser.
+> Usa ⬇️ **Esporta** / ⬆️ **Importa** per spostarli.
+
+## ⚙️ Impostazioni
+
+Da ⚙️ **Impostazioni** puoi regolare:
+
+- **Commissioni Vinted %** (0 di default per i venditori su Vinted IT)
+- **Margine default %** usato dal calcolatore
+- **Arrotondamento prezzi** (.99, .95 o esatto)
+- **Nota spedizione** predefinita degli annunci
+
+## 💾 Backup e ripristino
+
+- **⬇️ Esporta**: scarica un file `.json` con tutti i tuoi dati
+- **⬆️ Importa**: ricarica quel file (anche su un altro dispositivo)
+- Fai un backup ogni tanto: i dati sono salvati solo nel browser di questo computer
+
+## 📸 Suggerimenti per le foto
+
+Le foto vengono ridimensionate automaticamente (max 900px) e compressi
+prima del salvataggio, per non riempire la memoria del browser.
+Una foto chiara con sfondo neutro funziona meglio di dieci foto scure.
+
+---
+Fatto con ❤️ per aspiranti reseller. Buone vendite! 🚀

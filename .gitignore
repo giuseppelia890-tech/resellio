@@ -1,0 +1,10 @@
+# dipendenze npm (solo per compilare l'APK)
+node_modules/
+package-lock.json
+
+# file generati dalle build
+www/
+android/
+
+# macOS
+.DS_Store

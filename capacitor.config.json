@@ -1,0 +1,18 @@
+{
+  "appId": "it.resellio.app",
+  "appName": "Resellio",
+  "webDir": "www",
+  "backgroundColor": "#0d2f31",
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#0d2f31"
+  },
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "Keyboard": {
+      "resize": "body"
+    }
+  }
+}
