@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Resellio — look moderno</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ================= RESELLIO — look moderno (Material 3 · scuro) ================= */
+:root{
+  /* --- colore sorgente: teal di Resellio, scala presa da Argus --- */
+  --brand-50:#e0f4f5;
+  --brand-300:#4fb8c2;
+  --brand-400:#2aa3ae;
+  --brand-500:#007782;
+  --brand-600:#00626b;
+  --brand-700:#014e55;
+
+  /* --- sfondi e superfici M3 su base scura --- */
+  --bg:#09090b;
+  --surface:#0e0e12;
+  --surface-1:#101013;
+  --surface-2:#121216;
+  --surface-3:#17171c;
+  --line:rgba(255,255,255,.08);
+  --line-2:rgba(255,255,255,.12);
+
+  /* --- testo --- */
+  --ink:#f3f4f6;
+  --ink-2:#9ca3af;
+  --ink-3:#6b7280;
+
+  /* --- stati --- */
+  --ok:#10b981;
+  --warn:#f59e0b;
+  --bad:#e11d48;
+
+  /* --- glow --- */
+  --glow-cta:0 0 20px -2px rgba(0,119,130,.5);
+  --glow-live:0 0 8px rgba(42,163,174,.6);
+  --inner-light:inset 0 1px rgba(255,255,255,.08);
+
+  /* --- raggi (M3, tondi) --- */
+  --r-xs:6px;--r-s:10px;--r-m:14px;--r-l:20px;--r-xl:26px;--r-full:999px;
+
+  /* --- movimenti --- */
+  --ease-soft:cubic-bezier(.22,1,.36,1);
+  --dur-fast:.14s;--dur-base:.22s;--dur-slow:.36s;--stagger:45ms;
+
+  --font:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;color:inherit}
+
+/* ============ animazioni ============ */
+@keyframes reveal-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+@keyframes livepulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes sheet-up{from{transform:translateY(100%)}to{transform:none}}
+@keyframes sheet-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes idlescan{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}
+.reveal{animation:reveal-up var(--dur-slow) var(--ease-soft) both}
+.reveal:nth-child(1){animation-delay:0ms}
+.reveal:nth-child(2){animation-delay:var(--stagger)}
+.reveal:nth-child(3){animation-delay:calc(var(--stagger)*2)}
+.reveal:nth-child(4){animation-delay:calc(var(--stagger)*3)}
+.reveal:nth-child(5){animation-delay:calc(var(--stagger)*4)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.wrap{max-width:1060px;margin:0 auto}
+.gap{height:9px;background:#050507}
+
+/* ============ top app bar ============ */
+.appbar{
+  position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:10px;
+  padding:calc(14px + env(safe-area-inset-top)) 16px 12px;
+  background:rgba(9,9,11,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid transparent;transition:border-color var(--dur-base);
+}
+.appbar.stuck{border-bottom-color:var(--line)}
+.appbar h1{margin:0;flex:1;font-size:20px;font-weight:600;letter-spacing:-.3px}
+.iconbtn{
+  width:42px;height:42px;border-radius:var(--r-full);border:1px solid transparent;background:none;
+  display:grid;place-items:center;font-size:18px;color:var(--ink-2);cursor:pointer;
+  transition:background var(--dur-fast),color var(--dur-fast);
+}
+.iconbtn:hover{background:var(--surface-2);color:var(--ink)}
+.dot-live{
+  width:8px;height:8px;border-radius:50%;background:var(--brand-400);
+  box-shadow:var(--glow-live);animation:livepulse 1.8s ease-in-out infinite;display:inline-block;
+}
+
+/* ============ card M3 ============ */
+.card{
+  background:var(--surface-1);border:1px solid var(--line);border-radius:var(--r-l);
+  box-shadow:var(--inner-light);overflow:hidden;
+  transition:transform var(--dur-base) var(--ease-soft),border-color var(--dur-base);
+}
+.card:hover{border-color:var(--line-2)}
+.card.plain{background:transparent;border-color:transparent;box-shadow:none}
+.card.tint{background:linear-gradient(150deg,rgba(0,119,130,.20),rgba(0,119,130,.04));border-color:rgba(0,119,130,.32)}
+.card-pad{padding:16px}
+.card-head{display:flex;align-items:center;gap:11px;padding:15px 16px 12px}
+.card-head .ttl{flex:1;font-size:15px;font-weight:600}
+
+/* ============ bottoni ============ */
+.btn{
+  height:44px;border-radius:var(--r-m);border:1px solid transparent;cursor:pointer;
+  padding:0 20px;font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform var(--dur-fast) var(--ease-soft),filter var(--dur-fast);
+}
+.btn:active{transform:scale(.975)}
+.btn-primary{background:var(--brand-500);color:#fff;box-shadow:var(--glow-cta)}
+.btn-primary:hover{filter:brightness(1.12)}
+.btn-tonal{background:rgba(0,119,130,.18);color:var(--brand-300);border-color:rgba(0,119,130,.3)}
+.btn-ghost{background:var(--surface-2);border-color:var(--line);color:var(--ink-2)}
+.btn-ghost:hover{color:var(--ink);border-color:var(--line-2)}
+.btn-pill{border-radius:var(--r-full)}
+
+/* ============ chip / filtri ============ */
+.chip{
+  height:34px;border-radius:var(--r-full);border:1px solid var(--line);
+  background:var(--surface-1);color:var(--ink-2);padding:0 14px;font-size:13px;font-weight:500;
+  cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all var(--dur-fast) var(--ease-soft);
+}
+.chip:hover{border-color:var(--line-2);color:var(--ink)}
+.chip.on{background:var(--brand-500);border-color:var(--brand-500);color:#fff;box-shadow:var(--glow-cta)}
+
+/* ============ navigation bar ============ */
+.navbar{
+  position:sticky;bottom:0;z-index:20;display:flex;gap:2px;
+  padding:10px 6px calc(10px + env(safe-area-inset-bottom));
+  background:rgba(9,9,11,.9);backdrop-filter:blur(14px);border-top:1px solid var(--line);
+}
+.navit{
+  flex:1;border:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;
+  font-size:11px;font-weight:600;color:var(--ink-3);padding:0;transition:color var(--dur-base);
+}
+.navit .ico{
+  width:62px;height:30px;border-radius:var(--r-full);display:grid;place-items:center;font-size:18px;
+  transition:background var(--dur-base) var(--ease-soft);
+}
+.navit.on{color:var(--ink)}
+.navit.on .ico{background:rgba(0,119,130,.28);box-shadow:var(--glow-live)}
+
+/* ============ contenuti ============ */
+.sec{margin:18px 16px 10px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.sec .more{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--brand-300);cursor:pointer}
+.muted{color:var(--ink-2)}
+.label{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--ink-3)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* KPI */
+.kpi{margin:0 16px;border-radius:var(--r-xl);padding:20px;background:linear-gradient(150deg,rgba(0,119,130,.28),rgba(0,119,130,.06) 70%);border:1px solid rgba(0,119,130,.3);box-shadow:var(--inner-light)}
+.kpi b{display:block;font-family:var(--mono);font-size:34px;font-weight:500;letter-spacing:-1.2px;margin:6px 0 4px}
+.kpi .sub{font-size:12.5px;color:var(--ink-2)}
+
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:0 16px}
+.mini{padding:14px;border-radius:var(--r-m);background:var(--surface-1);border:1px solid var(--line);box-shadow:var(--inner-light)}
+.mini b{display:block;font-family:var(--mono);font-size:17px;font-weight:500;margin-top:5px}
+
+/* barra di progresso */
+.bar{height:6px;border-radius:var(--r-full);background:rgba(255,255,255,.07);overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;border-radius:var(--r-full);background:linear-gradient(90deg,var(--brand-500),var(--brand-400));box-shadow:var(--glow-live)}
+
+/* liste */
+.list{padding:0 16px;display:flex;flex-direction:column;gap:9px}
+.item{display:flex;align-items:center;gap:13px;padding:12px;border-radius:var(--r-m);background:var(--surface-1);border:1px solid var(--line);box-shadow:var(--inner-light)}
+.av{width:50px;height:50px;border-radius:var(--r-m);flex:none;display:grid;place-items:center;font-size:23px;background:var(--surface-3);border:1px solid var(--line)}
+.it-txt{flex:1;min-width:0}
+.it-txt b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it-txt span{font-size:12px;color:var(--ink-3)}
+.it-right{text-align:right;flex:none}
+.it-right b{font-family:var(--mono);font-size:14px;font-weight:500}
+.it-right span{display:block;font-size:12px;color:var(--ink-3);font-family:var(--mono)}
+.up{color:var(--ok)}.down{color:var(--bad)}
+
+/* inventario */
+.inv{display:grid;grid-template-columns:1fr 1fr;gap:11px;padding:0 16px}
+.inv .card{border-radius:var(--r-m)}
+.thumb{height:118px;background:linear-gradient(150deg,#1b2b2d,#132326);display:grid;place-items:center;font-size:36px;position:relative}
+.badge{
+  position:absolute;top:9px;left:9px;font-size:10.5px;font-weight:700;letter-spacing:.2px;
+  padding:5px 9px;border-radius:var(--r-full);background:rgba(9,9,11,.72);backdrop-filter:blur(8px);
+  border:1px solid var(--line-2);display:flex;align-items:center;gap:5px;
+}
+.inv-body{padding:11px 12px 13px}
+.inv-body .nm{font-size:13px;font-weight:600;line-height:1.3;margin-bottom:7px}
+.price{font-family:var(--mono);font-size:16px;font-weight:500}
+.gain{font-size:11.5px;font-weight:600;color:var(--ok);font-family:var(--mono)}
+
+/* ============ FAB ============ */
+.fab{
+  width:56px;height:56px;border-radius:var(--r-l);border:0;cursor:pointer;
+  background:var(--brand-500);color:#fff;font-size:24px;display:grid;place-items:center;
+  box-shadow:var(--glow-cta),0 8px 24px rgba(0,0,0,.5);transition:transform var(--dur-fast) var(--ease-soft);
+}
+.fab:active{transform:scale(.94)}
+.center{display:flex;justify-content:center;padding:14px 0 18px}
+
+/* ============ bottom sheet ============ */
+.sheet{
+  margin:0 16px;border-radius:var(--r-xl);background:var(--surface-2);border:1px solid var(--line-2);
+  box-shadow:0 -12px 40px rgba(0,0,0,.6);overflow:hidden;animation:sheet-up var(--dur-slow) var(--ease-soft);
+}
+.sheet-grab{width:34px;height:4px;border-radius:var(--r-full);background:rgba(255,255,255,.18);margin:10px auto 4px}
+.field{padding:14px 16px;border-top:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.field .lbl{flex:1}
+.field .lbl b{display:block;font-size:13.5px;font-weight:600}
+.field .lbl span{font-size:12px;color:var(--ink-3)}
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper button{width:34px;height:34px;border-radius:var(--r-full);border:1px solid var(--line);background:var(--surface-3);cursor:pointer;font-size:17px}
+.stepper span{font-family:var(--mono);font-size:15px;min-width:22px;text-align:center}
+.sw{width:50px;height:30px;border-radius:var(--r-full);background:rgba(255,255,255,.12);position:relative;flex:none;transition:background var(--dur-base)}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#f3f4f6;transition:transform var(--dur-base) var(--ease-soft)}
+.sw.on{background:var(--brand-500);box-shadow:var(--glow-cta)}
+.sw.on::after{transform:translateX(20px)}
+
+/* ============ login ============ */
+.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px;position:relative;overflow:hidden}
+.login-page::before{
+  content:"";position:absolute;top:-30%;left:50%;transform:translateX(-50%);
+  width:560px;height:560px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,119,130,.35),transparent 68%);filter:blur(30px);
+}
+.login-card{
+  position:relative;width:100%;max-width:376px;border-radius:var(--r-xl);padding:28px 22px 22px;
+  background:rgba(16,16,19,.86);backdrop-filter:blur(20px);
+  border:1px solid var(--line-2);box-shadow:var(--inner-light),0 30px 70px rgba(0,0,0,.6);
+  animation:sheet-rise var(--dur-slow) var(--ease-soft) both;text-align:center;
+}
+.login-logo{
+  width:62px;height:62px;margin:0 auto 14px;border-radius:19px;display:grid;place-items:center;font-size:29px;
+  background:linear-gradient(150deg,var(--brand-400),var(--brand-700));box-shadow:var(--glow-cta),var(--inner-light);
+}
+.login-card h1{margin:0 0 5px;font-size:23px;font-weight:700;letter-spacing:-.4px}
+.login-card .sub{margin:0 0 20px;font-size:13.5px;color:var(--ink-2)}
+.input{
+  width:100%;height:48px;border-radius:var(--r-m);border:1px solid var(--line);
+  background:var(--surface);color:var(--ink);padding:0 15px;font-size:14.5px;font-family:inherit;
+  transition:border-color var(--dur-fast),box-shadow var(--dur-fast);
+}
+.input::placeholder{color:var(--ink-3)}
+.input:focus{outline:none;border-color:var(--brand-500);box-shadow:0 0 0 3px rgba(0,119,130,.22)}
+.btn-google{
+  width:100%;height:48px;border-radius:var(--r-m);border:1px solid var(--line-2);
+  background:#fff;color:#1f2937;font-size:14.5px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.g{width:19px;height:19px;border-radius:50%;background:conic-gradient(from -45deg,#ea4335 110deg,#4285f4 90deg 180deg,#34a853 180deg 270deg,#fbbc05 270deg);display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff}
+.sep{display:flex;align-items:center;gap:12px;margin:16px 0;font-size:11.5px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.6px}
+.sep::before,.sep::after{content:"";flex:1;height:1px;background:var(--line)}
+.link{background:none;border:0;color:var(--brand-300);font-size:13px;font-weight:600;cursor:pointer;padding:6px}
+.trust{margin-top:18px;font-size:11.5px;color:var(--ink-3);display:flex;align-items:center;justify-content:center;gap:7px}
+
+/* ============ toast ============ */
+.toast{
+  position:sticky;bottom:76px;margin:16px;border-radius:var(--r-m);padding:14px 16px;
+  background:var(--surface-3);border:1px solid var(--line-2);display:flex;align-items:center;gap:12px;
+  font-size:13.5px;box-shadow:0 14px 40px rgba(0,0,0,.55);animation:sheet-rise var(--dur-base) var(--ease-soft);
+}
+.toast .act{margin-left:auto;color:var(--brand-300);font-weight:700;font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- =================== LOGIN =================== -->
+  <div class="login-page">
+    <div class="login-card">
+      <div class="login-logo">🏷️</div>
+      <h1>Resellio</h1>
+      <p class="sub">Accedi per continuare</p>
+
+      <button class="btn-google"><span class="g">G</span> Continua con Google</button>
+      <div class="sep">oppure con l'email</div>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <input class="input" type="email" placeholder="Email">
+        <input class="input" type="password" placeholder="Password">
+        <button class="btn btn-primary btn-pill" style="width:100%;height:48px">Accedi</button>
+      </div>
+      <div style="margin-top:6px">
+        <button class="link">Non hai un account? Registrati</button>
+      </div>
+      <div class="trust"><span class="dot-live"></span> I dati restano sul tuo telefono</div>
+    </div>
+  </div>
+
+  <div class="gap"></div>
+
+  <!-- =================== DASHBOARD =================== -->
+  <div class="appbar">
+    <h1>Dashboard</h1>
+    <button class="iconbtn">☁️</button>
+    <button class="iconbtn">⚙️</button>
+  </div>
+
+  <div class="kpi reveal">
+    <span class="label">Guadagno questo mese</span>
+    <b>112,40 €</b>
+    <span class="sub">4 vendite · 3 articoli ancora in vendita</span>
+    <div class="bar"><i style="width:64%"></i></div>
+  </div>
+
+  <div class="row3 reveal" style="margin-top:11px">
+    <div class="mini"><span class="label">Investito</span><b>71,50 €</b></div>
+    <div class="mini"><span class="label">Potenziale</span><b>86,00 €</b></div>
+    <div class="mini"><span class="label">Venduti</span><b>4</b></div>
+  </div>
+
+  <div class="sec reveal">Ultimi movimenti <span class="more">Tutti ›</span></div>
+  <div class="list">
+    <div class="item reveal">
+      <div class="av">🧥</div>
+      <div class="it-txt"><b>Felpa Carhartt WIP</b><span>Venduta ieri</span></div>
+      <div class="it-right"><b class="up">+25,99 €</b><span>39,99 €</span></div>
+    </div>
+    <div class="item reveal">
+      <div class="av">🧣</div>
+      <div class="it-txt"><b>Sciarpa Zara</b><span>In vendita</span></div>
+      <div class="it-right"><span>14,99 €</span></div>
+    </div>
+    <div class="item reveal">
+      <div class="av">👟</div>
+      <div class="it-txt"><b>Sneakers New Balance</b><span>Da pubblicare</span></div>
+      <div class="it-right"><span>54,99 €</span></div>
+    </div>
+  </div>
+
+  <div class="center"><button class="fab">＋</button></div>
+
+  <div class="toast">Articolo salvato ✓ <span class="act">ANNULLA</span></div>
+
+  <div class="navbar">
+    <button class="navit on"><span class="ico">📊</span>Home</button>
+    <button class="navit"><span class="ico">🧥</span>Inventario</button>
+    <button class="navit"><span class="ico">🧮</span>Prezzi</button>
+    <button class="navit"><span class="ico">💰</span>Vendite</button>
+    <button class="navit"><span class="ico">🔍</span>Caccia</button>
+  </div>
+
+  <div class="gap"></div>
+
+  <!-- =================== INVENTARIO =================== -->
+  <div class="appbar">
+    <h1>Inventario</h1>
+    <button class="iconbtn">🔎</button>
+    <button class="iconbtn">⇅</button>
+  </div>
+
+  <div style="padding:0 16px 14px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none">
+    <button class="chip on">✓ Tutti</button>
+    <button class="chip">Sign in vendita</button>
+    <button class="chip">Da pubblicare</button>
+    <button class="chip">Venduti</button>
+  </div>
+
+  <div class="inv">
+    <div class="card reveal">
+      <div class="thumb">🧥<span class="badge"><span class="dot-live"></span> In vendita</span></div>
+      <div class="inv-body">
+        <div class="nm">Felpa Carhartt WIP</div>
+        <div class="price">39,99 €</div>
+        <div class="gain">+25,99 € guadagno</div>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="thumb">👟<span class="badge">💰 Venduto</span></div>
+      <div class="inv-body">
+        <div class="nm">Sneakers New Balance 574</div>
+        <div class="price">54,99 €</div>
+        <div class="gain">+28,99 € guadagno</div>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="thumb">🧣<span class="badge">✍️ Bozza</span></div>
+      <div class="inv-body">
+        <div class="nm">Sciarpa Zara lana</div>
+        <div class="price">14,99 €</div>
+        <div class="gain">+8,49 € guadagno</div>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="thumb">👖<span class="badge">📸 Da fotografare</span></div>
+      <div class="inv-body">
+        <div class="nm">Jeans Levi's 501</div>
+        <div class="price">29,99 €</div>
+        <div class="gain">+20,49 € guadagno</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="center"><button class="fab">＋</button></div>
+
+  <div class="navbar">
+    <button class="navit"><span class="ico">📊</span>Home</button>
+    <button class="navit on"><span class="ico">🧥</span>Inventario</button>
+    <button class="navit"><span class="ico">🧮</span>Prezzi</button>
+    <button class="navit"><span class="ico">💰</span>Vendite</button>
+    <button class="navit"><span class="ico">🔍</span>Caccia</button>
+  </div>
+
+  <div class="gap"></div>
+
+  <!-- =================== DETTAGLIO =================== -->
+  <div class="appbar">
+    <button class="iconbtn">←</button>
+    <h1 style="font-size:17px">Felpa Carhartt WIP</h1>
+    <button class="iconbtn">✏️</button>
+  </div>
+
+  <div style="padding:0 16px 12px">
+    <div class="thumb" style="height:180px;border-radius:var(--r-l)">🧥</div>
+  </div>
+
+  <div style="padding:0 16px 12px;display:flex;gap:10px">
+    <button class="btn btn-primary" style="flex:1">💰 Segna come venduto</button>
+    <button class="btn btn-ghost btn-pill" style="width:48px;padding:0">⋯</button>
+  </div>
+
+  <div class="list">
+    <div class="card reveal">
+      <div class="card-pad">
+        <span class="label">Guadagno netto</span>
+        <div style="font-family:var(--mono);font-size:30px;font-weight:500;letter-spacing:-1px;margin:5px 0 3px" class="up">+25,99 €</div>
+        <div class="muted" style="font-size:12.5px">margine 65% · ROI 186%</div>
+        <div class="bar" style="margin-top:14px"><i style="width:65%"></i></div>
+        <div style="display:flex;justify-content:space-between;margin-top:9px;font-size:12.5px" class="muted">
+          <span>Costo 14,00 €</span><span>Vendita 39,99 €</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card tint reveal">
+      <div class="card-head"><span>✨</span><span class="ttl">Analisi prezzo</span></div>
+      <div style="padding:0 16px 16px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="mini"><span class="label">Suggerito</span><b>23,99 €</b></div>
+          <div class="mini"><span class="label">Pareggio</span><b>14,00 €</b></div>
+        </div>
+        <button class="btn btn-tonal" style="width:100%;margin-top:12px">Usa il prezzo suggerito</button>
+      </div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-head"><span>📦</span><span class="ttl">Dettagli</span></div>
+      <div style="padding:0 16px 6px">
+        <div class="field" style="border-top:1px solid var(--line)"><div class="lbl"><b>Taglia</b><span>L</span></div></div>
+        <div class="field"><div class="lbl"><b>Brand</b><span>Carhartt</span></div></div>
+        <div class="field"><div class="lbl"><b>Fonte</b><span>Vinted</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">Aggiungi al volo</div>
+  <div class="sheet">
+    <div class="sheet-grab"></div>
+    <div class="field"><span>🧾</span><div class="lbl"><b>Prezzo di vendita</b><span>consigliato 23,99 €</span></div><div class="stepper"><button>−</button><span>39,99</span><button>＋</button></div></div>
+    <div class="field"><span>🔔</span><div class="lbl"><b>Avvisami se scende</b><span>notifica quando il prezzo cala</span></div><div class="sw on"></div></div>
+    <div class="field" style="gap:10px">
+      <button class="btn btn-primary" style="flex:1">Salva</button>
+      <button class="btn btn-ghost">Annulla</button>
+    </div>
+  </div>
+
+  <div class="navbar">
+    <button class="navit"><span class="ico">📊</span>Home</button>
+    <button class="navit on"><span class="ico">🧥</span>Inventario</button>
+    <button class="navit"><span class="ico">🧮</span>Prezzi</button>
+    <button class="navit"><span class="ico">💰</span>Vendite</button>
+    <button class="navit"><span class="ico">🔍</span>Caccia</button>
+  </div>
+
+  <div style="height:24px"></div>
+</div>
+
+<script>
+  addEventListener('scroll', () => {
+    document.querySelectorAll('.appbar').forEach(b => {
+      b.classList.toggle('stuck', b.getBoundingClientRect().top <= 0);
+    });
+  }, { passive: true });
+</script>
+</body>
+</html>
