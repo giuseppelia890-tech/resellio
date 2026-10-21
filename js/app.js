@@ -3,13 +3,13 @@ const App = (() => {
   const { esc, num } = Utils;
 
   const VIEWS = {
-    dashboard:  { title: 'Dashboard',            render: () => Views.dashboard() },
-    inventory:  { title: 'Inventario',           render: () => Views.inventory() },
-    calculator: { title: 'Prezzi & profitti',    render: () => Views.calculator() },
-    sales:      { title: 'Vendite',              render: () => Views.sales() },
-    shopping:   { title: 'Lista acquisti',       render: () => Views.shopping() },
-    scouting:   { title: 'Caccia occasioni',     render: () => Views.scouting() },
-    generator:  { title: 'Genera annuncio',      render: () => Views.generator() },
+    dashboard:  { title: 'Dashboard',            icon: '📊', render: () => Views.dashboard() },
+    inventory:  { title: 'Inventario',           icon: '🧥', render: () => Views.inventory() },
+    calculator: { title: 'Prezzi & profitti',    icon: '🧮', render: () => Views.calculator() },
+    sales:      { title: 'Vendite',              icon: '💰', render: () => Views.sales() },
+    shopping:   { title: 'Lista acquisti',       icon: '🛒', render: () => Views.shopping() },
+    scouting:   { title: 'Caccia occasioni',     icon: '🔍', render: () => Views.scouting() },
+    generator:  { title: 'Genera annuncio',      icon: '✍️', render: () => Views.generator() },
   };
 
   const ui = { view: 'dashboard', inv: { q: '', stato: 'tutti', fonte: 'tutte', sort: 'recenti' }, salesPeriod: '6mesi' };
@@ -29,6 +29,8 @@ const App = (() => {
     ui.view = currentView();
     const el = document.getElementById('view');
     document.getElementById('page-title').textContent = VIEWS[ui.view].title;
+    const ico = document.querySelector('.title-ico');
+    if (ico) ico.textContent = VIEWS[ui.view].icon;
     document.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === ui.view));
     el.innerHTML = VIEWS[ui.view].render();
     el.classList.remove('enter');

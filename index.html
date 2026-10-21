@@ -2,16 +2,20 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Resellio — Il tuo gestionale per il reselling su Vinted</title>
 <meta name="description" content="Gestisci inventario, prezzi, vendite, acquisti e annunci per il reselling su Vinted. I dati restano sul tuo dispositivo.">
-<meta name="theme-color" content="#0d2f31">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#09090b">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏷️</text></svg>">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -42,17 +46,22 @@
 
   <main class="main">
     <header class="topbar">
-      <h1 id="page-title">Dashboard</h1>
+      <div class="title-wrap">
+        <span class="title-ico" aria-hidden="true">📊</span>
+        <h1 id="page-title">Dashboard</h1>
+      </div>
       <div class="topbar-actions">
         <span id="sync-state" class="sync-state" title="" hidden></span>
-        <button class="btn btn-ghost" data-action="settings" title="Impostazioni">⚙️ <span class="hide-sm">Impostazioni</span></button>
-        <button class="btn btn-ghost" data-action="export" title="Scarica un backup dei tuoi dati">⬇️ <span class="hide-sm">Esporta</span></button>
-        <button class="btn btn-ghost" id="btn-lock" data-action="lock-app" title="Blocca l'app con il PIN" hidden>🔒</button>
-        <button class="btn btn-primary" data-action="add-item">＋ Nuovo articolo</button>
+        <button class="icon-btn" data-action="settings" title="Impostazioni" aria-label="Impostazioni">⚙️</button>
+        <button class="icon-btn" data-action="export" title="Scarica un backup dei tuoi dati" aria-label="Esporta backup">⬇️</button>
+        <button class="icon-btn" id="btn-lock" data-action="lock-app" title="Blocca l'app con la password" aria-label="Blocca l'app" hidden>🔒</button>
+        <button class="btn btn-primary hide-sm" data-action="add-item">＋ Nuovo articolo</button>
       </div>
     </header>
     <section class="view" id="view"></section>
   </main>
+
+  <button class="fab-mobile" data-action="add-item" aria-label="Nuovo articolo">＋</button>
 
   <nav class="bottom-nav" aria-label="Navigazione mobile">
     <button class="bottom-item" data-view="dashboard"><span>📊</span><small>Home</small></button>

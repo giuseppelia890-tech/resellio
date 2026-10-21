@@ -2,17 +2,31 @@
   "appId": "it.resellio.app",
   "appName": "Resellio",
   "webDir": "www",
-  "backgroundColor": "#0d2f31",
+  "backgroundColor": "#09090b",
+  "presentationStyle": "fullscreen",
   "android": {
     "allowMixedContent": false,
-    "backgroundColor": "#0d2f31"
+    "backgroundColor": "#09090b",
+    "webContentsDebuggingEnabled": true,
+    "captureInput": true,
+    "useLegacyBridge": false,
+    "minWebViewVersion": 60,
+    "adjustMarginsForEdgeToEdge": "auto"
   },
   "server": {
-    "androidScheme": "https"
+    "androidScheme": "https",
+    "hostname": "localhost"
   },
   "plugins": {
     "Keyboard": {
-      "resize": "body"
+      "resize": "body",
+      "style": "dark",
+      "resizeOnFullScreen": true
+    },
+    "StatusBar": {
+      "style": "dark",
+      "backgroundColor": "#09090b",
+      "overlaysWebView": false
     }
   }
 }
