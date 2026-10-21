@@ -22,6 +22,7 @@ const Scout = (() => {
       id: String(o.id || url || Math.random().toString(36).slice(2)),
       titolo: String(o.title || o.name || '').trim().slice(0, 140),
       brand: String(o.brand_title || (o.brand && (o.brand.title || o.brand.name)) || '').trim().slice(0, 60),
+      taglia: String(o.size_title || (o.size && (o.size.title || o.size.name)) || '').trim().slice(0, 12),
       prezzo: parsePrice(o.total_item_price ?? o.price ?? o.raw_price),
       foto: (o.photo && (o.photo.url || o.photo.src)) ||
             (Array.isArray(o.photos) && o.photos[0] && (o.photos[0].url || o.photos[0].src)) || '',
@@ -97,6 +98,81 @@ const Scout = (() => {
     return out;
   }
 
+  /* --- Mercati Vinted: cambiando paese cambiano annunci e prezzi --- */
+  const MARKETS = {
+    it: { host: 'www.vinted.it', label: 'Italia 🇮🇹' },
+    fr: { host: 'www.vinted.fr', label: 'Francia 🇫🇷' },
+    de: { host: 'www.vinted.de', label: 'Germania 🇩🇪' },
+    es: { host: 'www.vinted.es', label: 'Spagna 🇪🇸' },
+    nl: { host: 'www.vinted.nl', label: 'Paesi Bassi 🇳🇱' },
+    be: { host: 'www.vinted.be', label: 'Belgio 🇧🇪' },
+    pl: { host: 'www.vinted.pl', label: 'Polonia 🇵🇱' },
+    lt: { host: 'www.vinted.lt', label: 'Lituania 🇱🇹' },
+  };
+  function marketHost(market, sourceUrl) {
+    if (sourceUrl) { try { return new URL(sourceUrl).host; } catch (e) {} }
+    return (MARKETS[market] || MARKETS.it).host;
+  }
+
+  /* --- Filtri: prezzo (lato Vinted) + brand e taglia (sui risultati) --- */
+  function searchParams(q, filters = {}) {
+    const p = new URLSearchParams();
+    p.set('search_text', q);
+    p.set('currency', 'EUR');
+    p.set('order', 'price_low_to_high');
+    const min = num(filters.priceMin), max = num(filters.priceMax);
+    if (min > 0) p.set('price_from', String(Math.round(min * 100) / 100));
+    if (max > 0) p.set('price_to', String(Math.round(max * 100) / 100));
+    return p;
+  }
+  function catalogUrl(q, filters = {}, sourceUrl = '') {
+    const host = marketHost(filters.market, sourceUrl);
+    return `https://${host}/catalog?${searchParams(q, filters).toString()}`;
+  }
+  function filterItems(items, filters = {}) {
+    let out = items.slice();
+    const brand = String(filters.brand || '').trim().toLowerCase();
+    const taglia = String(filters.taglia || '').trim().toLowerCase();
+    const min = num(filters.priceMin), max = num(filters.priceMax);
+    if (min > 0) out = out.filter(i => i.prezzo >= min);
+    if (max > 0) out = out.filter(i => i.prezzo <= max);
+    if (brand) out = out.filter(i => (i.titolo + ' ' + (i.brand || '')).toLowerCase().includes(brand));
+    if (taglia) {
+      const safe = taglia.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const re = new RegExp('(^|[^a-z0-9])' + safe + '([^a-z0-9]|$)', 'i');
+      out = out.filter(i => re.test(i.titolo) || String(i.taglia || '').toLowerCase() === taglia);
+    }
+    return out;
+  }
+
+  /* --- Statistiche di mercato --- */
+  function marketStats(items) {
+    const prices = items.map(i => i.prezzo).filter(p => p > 0).sort((a, b) => a - b);
+    if (!prices.length) return null;
+    const q = f => {
+      const pos = (prices.length - 1) * f;
+      const base = Math.floor(pos), rest = pos - base;
+      return prices[base + 1] !== undefined ? prices[base] + rest * (prices[base + 1] - prices[base]) : prices[base];
+    };
+    const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
+    return {
+      count: prices.length,
+      min: prices[0],
+      max: prices[prices.length - 1],
+      avg,
+      median: q(0.5),
+      p25: q(0.25),
+      /* sotto questo prezzo è un affare rispetto al mercato */
+      good: q(0.25),
+    };
+  }
+  function snapshotFor(items) {
+    const st = marketStats(items);
+    if (!st) return null;
+    const r = n => Math.round(n * 100) / 100;
+    return { date: Utils.today(), avg: r(st.avg), median: r(st.median), min: r(st.min), count: st.count };
+  }
+
   /* Strategia secondaria: API JSON di Vinted tramite proxy CORS pubblici */
   const PROXIES = [
     u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
@@ -115,10 +191,11 @@ const Scout = (() => {
     catch (e) { return 'www.vinted.it'; }
   }
 
-  async function fetchResults(q, sourceUrl, onStatus) {
-    const host = hostFromUrl(sourceUrl || '');
+  async function fetchResults(q, sourceUrl, onStatus, filters = {}) {
+    const host = marketHost(filters.market, sourceUrl);
+    const params = searchParams(q, filters);
     const eq = encodeURIComponent(q);
-    const catalogUrl = `https://${host}/catalog?search_text=${eq}`;
+    const catalogUrl = `https://${host}/catalog?${params.toString()}`;
 
     // 1) Strategia primaria: leggo la pagina di ricerca Vinted come testo
     if (onStatus) onStatus('Apro la ricerca su Vinted…');
@@ -131,15 +208,16 @@ const Scout = (() => {
       });
       clearTimeout(timer);
       if (res.ok) {
-        const items = parseJinaMarkdown(await res.text());
+        const items = filterItems(parseJinaMarkdown(await res.text()), filters);
         if (items.length) return items;
       }
     } catch (e) { /* passo alla strategia 2 */ }
 
     // 2) Strategia secondaria: API JSON di Vinted tramite proxy pubblici
+    const extra = [...params.entries()].filter(([k]) => k !== 'search_text').map(([k, v]) => `&${k}=${encodeURIComponent(v)}`).join('');
     const targets = [
-      `https://${host}/api/v2/search/items?search_text=${eq}&per_page=24&page=1&currency=EUR&order=rank_or_date_desc`,
-      `https://${host}/api/v2/catalog/items?search_text=${eq}&per_page=24&page=1&currency=EUR`,
+      `https://${host}/api/v2/search/items?search_text=${eq}&per_page=24&page=1&currency=EUR&order=price_low_to_high${extra}`,
+      `https://${host}/api/v2/catalog/items?search_text=${eq}&per_page=24&page=1&currency=EUR${extra}`,
     ];
     let tries = 0;
     for (const target of targets) {
@@ -155,7 +233,7 @@ const Scout = (() => {
           const data = JSON.parse(await res.text());
           const found = extractItems(data);
           if (found && found.length) {
-            return found.map(normalizeItem).filter(x => x.prezzo > 0 && x.titolo);
+            return filterItems(found.map(normalizeItem).filter(x => x.prezzo > 0 && x.titolo), filters);
           }
         } catch (e) { /* proxy non disponibile: provo il prossimo */ }
       }
@@ -316,5 +394,6 @@ const Scout = (() => {
 
   return {
     parsePrice, parsePasted, parseJinaMarkdown, fetchResults, searchTextFromUrl, analyze, resultsHTML,
+    MARKETS, marketHost, catalogUrl, filterItems, marketStats, snapshotFor,
   };
 })();

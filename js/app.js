@@ -38,6 +38,10 @@ const App = (() => {
     el.classList.add('enter');
     if (ui.view === 'calculator') Calc.update();
     if (ui.view === 'generator') AdGen.update();
+    if (ui.view === 'scouting') setTimeout(() => {
+      const wl = Store.state.scout.watchlist || [];
+      if (wl.length && navigator.onLine && wl.some(w => w.lastCheck !== Utils.today())) scoutWatchCheck(true);
+    }, 300);
   }
 
   function refresh() { render(); }
@@ -56,6 +60,8 @@ const App = (() => {
     const status = document.getElementById('scout-status');
     const btn = document.getElementById('scout-fetch-btn');
     const val = Utils.formValues(form);
+    const filters = { priceMin: val.priceMin, priceMax: val.priceMax, brand: val.brand, taglia: val.taglia, market: val.market };
+    Store.saveScoutFilters(filters);
     const q = String(val.q || '').trim() || Scout.searchTextFromUrl(val.sourceUrl);
     if (!q) { Utils.toast('Scrivi cosa vuoi cercare (o incolla un URL di ricerca Vinted)', 'err'); return; }
     Store.saveScout({ q, sourceUrl: String(val.sourceUrl || '').trim(), resale: val.resale, marginPct: val.marginPct });
@@ -65,13 +71,15 @@ const App = (() => {
     try {
       items = await Scout.fetchResults(q, val.sourceUrl, msg => {
         status.innerHTML = `<div class="scout-loading">⏳ ${esc(msg)}</div>`;
-      });
+      }, filters);
     } catch (e) { items = null; }
     btn.disabled = false;
     if (items && items.length) {
       Store.saveScout({ results: items });
       status.innerHTML = '';
       refreshScoutResults();
+      const snap = Scout.snapshotFor(items); if (snap) Store.pushHistory(q, filters.market, snap);
+      checkWatches(items, filters);
       Utils.toast(`${items.length} annunci trovati e valutati 🔎`, 'ok');
     } else {
       status.innerHTML = `<div class="scout-warning">⚠️ Vinted blocca il recupero automatico dei risultati dal browser.<br>
@@ -79,6 +87,39 @@ const App = (() => {
       const paste = document.getElementById('scout-paste');
       if (paste) { paste.focus(); paste.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     }
+  }
+
+  /* --- Controlla se annunci sorvegliati sono scesi sotto soglia (ricerca corrente) --- */
+  async function checkWatches(items, filters) {
+    for (const w of Store.state.scout.watchlist || []) {
+      if (w.q.toLowerCase() === filters.q.toLowerCase() && w.market === filters.market) {
+        const cheap = items.slice().sort((a, b) => a.prezzo - b.prezzo)[0];
+        const hit = cheap && cheap.prezzo <= num(w.maxPrice);
+        const st = Scout.marketStats(items);
+        Store.updateWatch(w.id, { lastMin: cheap ? cheap.prezzo : null, lastAvg: st ? st.avg : null, lastCheck: Utils.today(), hit, lastItem: cheap ? { titolo: cheap.titolo, url: cheap.url } : null });
+        if (hit && !w.hit) Utils.toast(`🔔 \"${w.q}\" è scesa a ${money(cheap.prezzo)} € (soglia ${money(w.maxPrice)})`, 'ok');
+      }
+    }
+  }
+
+  /* --- Controlla TUTTI gli avvisi (non solo quelli matching la ricerca corrente) --- */
+  async function scoutWatchCheck(silent = false) {
+    if (!Store.state.scout.watchlist || !Store.state.scout.watchlist.length) return;
+    if (!silent) Utils.toast('Controllo avvisi in corso…');
+    for (const w of Store.state.scout.watchlist) {
+      try {
+        const items = await Scout.fetchResults(w.q, '', () => {}, { market: w.market, priceMin: '', priceMax: '' });
+        const cheap = items.slice().sort((a, b) => a.prezzo - b.prezzo)[0];
+        const hit = cheap && cheap.prezzo <= num(w.maxPrice);
+        const st = Scout.marketStats(items);
+        Store.updateWatch(w.id, { lastMin: cheap ? cheap.prezzo : null, lastAvg: st ? st.avg : null, lastCheck: Utils.today(), hit, lastItem: cheap ? { titolo: cheap.titolo, url: cheap.url } : null });
+        if (hit && !silent) Utils.toast(`🔔 \"${w.q}\" è scesa a ${money(cheap.prezzo)} € (soglia ${money(w.maxPrice)})`, 'ok');
+      } catch (e) {
+        if (!silent) Utils.toast(`⚠️ Errore nel controllare \"${w.q}\"`, 'err');
+      }
+    }
+    if (!silent) Utils.toast('Controllo avvisi completato', 'ok');
+    refreshScoutResults();
   }
 
   /* --- Delegazione globale click --- */
@@ -93,6 +134,31 @@ const App = (() => {
     switch (a) {
       case 'close-modal': Modals.close(); break;
       case 'more-menu': Modals.more(); break;
+
+      case 'scout-watch': Modals.watch({ q: Store.state.scout.q, market: Store.state.scout.filters.market }); break;
+      case 'scout-watch-save': {
+        const form = document.getElementById('watch-form');
+        if (form) form.requestSubmit();
+        break;
+      }
+      case 'scout-watch-remove': {
+        const id = aEl.dataset.id;
+        if (id) {
+          Modals.confirm('Togliere l\'avviso?', { okLabel: 'Togli' }).then(ok => {
+            if (ok) {
+              Store.removeWatch(id);
+              Utils.toast('Avviso rimosso', 'ok');
+              refreshScoutResults();
+            }
+          });
+        }
+        break;
+      }
+      case 'scout-watch-check': {
+        const silent = aEl.dataset.silent != null;
+        scoutWatchCheck(silent);
+        break;
+      }
 
       case 'add-item': Modals.item(null); break;
       case 'edit-item': Modals.item(id); break;

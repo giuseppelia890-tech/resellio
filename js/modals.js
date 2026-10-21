@@ -518,5 +518,44 @@ const Modals = (() => {
       </div>`);
   }
 
-  return { open, close, confirm, item, sell, deal, settings, more };
+  /* --- Aggiungi un avviso su una ricerca (prezzo scende sotto soglia) --- */
+  function watch(prefill = {}) {
+    const w = Store.state.scout.watchlist.find(w => w.q === prefill.q && w.market === prefill.market) || {};
+    const markets = Object.entries(Scout.MARKETS).map(([k, v]) => `<option value="${k}" ${w.market === k ? 'selected' : ''}>${v.label}</option>`).join('');
+    open(`
+      <div class="modal-head"><h2>🔔 Avvisami se scende</h2>
+        <button class="icon-btn" data-action="close-modal" aria-label="Chiudi">✕</button></div>
+      <div class="modal-body">
+        <form id="watch-form" class="form-grid">
+          <div class="field span-2"><label>Ricerca da sorvegliare</label>
+            <input class="input" name="q" value="${esc(prefill.q || w.q || '')}" readonly></div>
+          <div class="field"><label>Mercato</label><select class="select" name="market">${markets}</select></div>
+          <div class="field"><label>Soglia prezzo €</label>
+            <input class="input num" name="maxPrice" inputmode="decimal" value="${esc(w.maxPrice || prefill.maxPrice || '')}" placeholder="es. 25,00"></div>
+        </form>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" data-action="close-modal">Annulla</button>
+        <button class="btn btn-primary" type="submit" form="watch-form">💾 Salva</button>
+      </div>`, {
+      onMount(root) {
+        const form = root.querySelector('#watch-form');
+        form.addEventListener('submit', e => {
+          e.preventDefault();
+          const val = Utils.formValues(form);
+          const data = {
+            q: String(val.q || '').trim(),
+            maxPrice: num(val.maxPrice),
+            market: String(val.market || '').trim(),
+          };
+          const w = Store.addWatch(data);
+          close();
+          Utils.toast(`Avviso creato per \"${w.q}\" sotto ${money(w.maxPrice)} €`, 'ok');
+          App.refreshScoutResults();
+        });
+      }
+    });
+  }
+
+  return { open, close, confirm, item, sell, deal, settings, more, watch };
 })();

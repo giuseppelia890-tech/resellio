@@ -386,38 +386,115 @@ const Views = (() => {
   }
 
   /* --- caccia occasioni --- */
+  function sparkline(points) {
+    if (!points || points.length < 2) return '';
+    const W = 320, H = 84, P = 8;
+    const vals = points.map(p => p.median || p.avg || 0);
+    const min = Math.min(...vals), max = Math.max(...vals);
+    const span = max - min || 1;
+    const x = i => P + (W - P * 2) * (i / (points.length - 1));
+    const y = v => H - P - (H - P * 2) * ((v - min) / span);
+    const d = vals.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(' ');
+    const area = `${d} L${x(vals.length - 1).toFixed(1)} ${H - P} L${x(0).toFixed(1)} ${H - P} Z`;
+    const last = vals[vals.length - 1];
+    return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Andamento del prezzo medio">
+      <path d="${area}" fill="rgba(0,119,130,.18)"/>
+      <path d="${d}" fill="none" stroke="#4fb8c2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="${x(vals.length - 1).toFixed(1)}" cy="${y(last).toFixed(1)}" r="3.5" fill="#4fb8c2"/>
+    </svg>
+    <div class="spark-foot">
+      <span>${esc(points[0].date)}</span>
+      <span>min ${money(Math.min(...vals))} · max ${money(Math.max(...vals))}</span>
+      <span>${esc(points[points.length - 1].date)}</span>
+    </div>`;
+  }
+
+  function marketCard() {
+    const s = Store.state.scout;
+    if (!s.results || !s.results.length) return '';
+    const st = Scout.marketStats(s.results);
+    if (!st) return '';
+    const market = (Scout.MARKETS[s.filters.market] || Scout.MARKETS.it).label;
+    const hist = Store.historyFor(s.q, s.filters.market);
+    return `<div class="card tint">
+      <div class="card-head"><div class="ttl">📊 Mercato</div>
+        <span class="muted small">${esc(market)} · ${st.count} annunci</span></div>
+      <div class="market-grid">
+        <div class="mini"><span class="label">Medio</span><b>${money(st.avg)}</b></div>
+        <div class="mini"><span class="label">Mediano</span><b>${money(st.median)}</b></div>
+        <div class="mini"><span class="label">Minimo</span><b class="up">${money(st.min)}</b></div>
+        <div class="mini"><span class="label">Massimo</span><b>${money(st.max)}</b></div>
+      </div>
+      <div class="market-tip">💡 Sotto <b>${money(st.good)}</b> è un buon affare: è il prezzo del 25% più basso della ricerca.</div>
+      ${hist.length >= 2 ? `<div class="spark-title label">Andamento del prezzo mediano</div>${sparkline(hist)}` : `<p class="hint">Torna a cercare nei prossimi giorni: qui vedrai il grafico dell'andamento dei prezzi.</p>`}
+    </div>`;
+  }
+
+  function watchCard() {
+    const list = Store.state.scout.watchlist || [];
+    const hit = list.filter(w => w.hit);
+    return `<div class="card">
+      <div class="card-head"><div class="ttl">🔔 Avvisi prezzo</div>
+        ${list.length ? `<button class="btn btn-sm btn-ghost" data-action="scout-watch-check">Controlla ora</button>` : ''}</div>
+      ${hit.length ? `<div class="watch-alert">${hit.map(w => `
+        <div class="watch-alert-row">🔔 <b>${esc(w.q)}</b> è scesa a <b>${money(w.lastMin)}</b> (la tua soglia ${money(w.maxPrice)})
+          ${w.lastItem && w.lastItem.url ? `<button class="btn btn-sm btn-tonal" data-action="open-link" data-href="${esc(w.lastItem.url)}">Apri</button>` : ''}
+        </div>`).join('')}</div>` : ''}
+      ${list.length ? `<div class="list">${list.map(w => `
+        <div class="mini-row">
+          <span class="ico">${w.hit ? '🔔' : '👀'}</span>
+          <div><div class="name">${esc(w.q)}</div>
+            <div class="sub">avvisami sotto ${money(w.maxPrice)}${w.lastMin != null ? ` · minimo trovato ${money(w.lastMin)}` : ''}${w.lastCheck ? ` · controllato ${esc(w.lastCheck)}` : ''}</div></div>
+          <span class="val">${w.hit ? '🔥' : (w.lastMin != null ? money(w.lastMin) : '—')}</span>
+          <button class="icon-btn" title="Togli l'avviso" data-action="scout-watch-remove" data-id="${esc(w.id)}">🗑️</button>
+        </div>`).join('')}</div>`
+      : `<p class="hint">Salva una ricerca e dimmi il prezzo massimo che vuoi spendere: quando torni nell'app controllo se è scesa.</p>`}
+      <button class="btn btn-tonal btn-block" style="margin-top:12px" data-action="scout-watch">🔔 Avvisami se scende</button>
+    </div>`;
+  }
+
   function scouting() {
     const s = Store.state.scout;
+    const f = s.filters || {};
     const marginDefault = s.marginPct != null && s.marginPct !== '' ? s.marginPct : Store.state.settings.defaultMarginPct;
+    const markets = Object.entries(Scout.MARKETS).map(([k, v]) => `<option value="${k}" ${f.market === k ? 'selected' : ''}>${v.label}</option>`).join('');
     return `
     <div class="card">
-      <div class="card-head"><div class="card-title">🔍 Caccia occasioni su Vinted</div>
-        ${s.results.length ? `<button class="btn btn-sm btn-ghost" data-action="scout-clear">🗑️ Svuota risultati</button>` : ''}</div>
+      <div class="card-head"><div class="ttl">🔍 Cerca su Vinted</div>
+        ${s.results.length ? `<button class="btn btn-sm btn-ghost" data-action="scout-clear">Svuota</button>` : ''}</div>
       <form id="scout-form" class="form-grid">
         <div class="field span-2"><label>Cosa vuoi cercare</label>
           <input class="input" name="q" value="${esc(s.q)}" placeholder="es. felpa carhartt, sneakers new balance…"></div>
-        <div class="field span-2"><label>URL della ricerca Vinted (opzionale — lo trovi nella barra del browser)</label>
-          <input class="input" name="sourceUrl" value="${esc(s.sourceUrl)}" placeholder="https://www.vinted.it/catalog?search_text=felpa+carhartt"></div>
+
+        <div class="field"><label>Mercato</label><select class="select" name="market">${markets}</select></div>
+        <div class="field"><label>Taglia</label><input class="input" name="taglia" value="${esc(f.taglia || '')}" placeholder="es. M, 42, 38"></div>
+        <div class="field"><label>Prezzo minimo €</label><input class="input num" name="priceMin" inputmode="decimal" value="${esc(f.priceMin || '')}" placeholder="da"></div>
+        <div class="field"><label>Prezzo massimo €</label><input class="input num" name="priceMax" inputmode="decimal" value="${esc(f.priceMax || '')}" placeholder="a"></div>
+        <div class="field"><label>Brand</label><input class="input" name="brand" value="${esc(f.brand || '')}" placeholder="es. Carhartt"></div>
         <div class="field"><label>Prezzo di rivendita atteso €</label>
           <input class="input num" name="resale" inputmode="decimal" value="${esc(s.resale || '')}" placeholder="es. 40"></div>
         <div class="field"><label>Margine desiderato %</label>
           <input class="input num" name="marginPct" inputmode="decimal" value="${esc(marginDefault)}"></div>
+        <div class="field"><label>URL ricerca Vinted (facoltativo)</label>
+          <input class="input" name="sourceUrl" value="${esc(s.sourceUrl)}" placeholder="incolla pure l'indirizzo della ricerca"></div>
         <div class="field span-2">
-          <button type="button" class="btn btn-primary" data-action="scout-fetch" id="scout-fetch-btn">🔍 Recupera annunci da Vinted</button>
-          <p class="hint">L'app prova a leggere i risultati della ricerca direttamente da Vinted. Se il recupero automatico viene bloccato, usa il pannello qui sotto: incolla i risultati copiati e l'app li analizza lo stesso.</p>
+          <button type="button" class="btn btn-primary" data-action="scout-fetch" id="scout-fetch-btn">🔍 Cerca e valuta</button>
+          <p class="hint">I filtri di prezzo vengono applicati da Vinted; brand e taglia sui risultati. Se Vinted blocca la lettura automatica, incolla i risultati qui sotto.</p>
         </div>
       </form>
       <div id="scout-status"></div>
     </div>
 
-    <div class="card">
-      <div class="card-head"><div class="card-title">…oppure incolla qui i risultati copiati</div></div>
-      <textarea class="textarea" id="scout-paste" rows="5" placeholder="Esempio di risultati copiati da Vinted:&#10;Felpa Carhartt WIP — €24,00&#10;Jeans Levi's 501 — 15,00 EUR&#10;Sneakers NB 574 € 29,99 https://www.vinted.it/items/123"></textarea>
-      <button class="btn btn-primary" style="margin-top:10px" data-action="scout-parse">📋 Analizza i risultati incollati</button>
-      <p class="hint">Titolo e prezzo per riga (uno o più annunci alla volta): per ognuno ti dico se conviene comprare.</p>
-    </div>
+    ${watchCard()}
+    <div id="scout-market">${marketCard()}</div>
+    <div id="scout-results">${scoutResults()}</div>
 
-    <div id="scout-results">${scoutResults()}</div>`;
+    <div class="card">
+      <div class="card-head"><div class="ttl">📋 …oppure incolla i risultati</div></div>
+      <textarea class="textarea" id="scout-paste" rows="4" placeholder="Esempio di risultati copiati da Vinted:&#10;Felpa Carhartt WIP — €24,00&#10;Jeans Levi's 501 — 15,00 EUR&#10;Sneakers NB 574 € 29,99 https://www.vinted.it/items/123"></textarea>
+      <button class="btn btn-primary btn-block" style="margin-top:10px" data-action="scout-parse">📋 Analizza i risultati incollati</button>
+      <p class="hint">Titolo e prezzo per riga (uno o più annunci alla volta): per ognuno ti dico se conviene comprare.</p>
+    </div>`;
   }
 
   function scoutResults() {

@@ -29,7 +29,15 @@ const Store = (() => {
     version: 1,
     items: [],
     deals: [],
-    scout: { q: '', sourceUrl: '', resale: 0, marginPct: null, results: [] },
+    scout: {
+      q: '', sourceUrl: '', resale: 0, marginPct: null, results: [],
+      /* filtri di ricerca (valgono anche per la watchlist) */
+      filters: { priceMin: '', priceMax: '', taglia: '', brand: '', market: 'it' },
+      /* ricerche sorvegliate: ti avviso quando il prezzo scende sotto la soglia */
+      watchlist: [],
+      /* storico del mercato per ogni ricerca: [{date, avg, median, min, count}] */
+      history: {},
+    },
     settings: {
       commissionPct: 0,
       defaultMarginPct: 40,
@@ -49,6 +57,9 @@ const Store = (() => {
       state.deals = Array.isArray(state.deals) ? state.deals : [];
       state.scout = state.scout && typeof state.scout === 'object' ? state.scout : defaults().scout;
       state.scout.results = Array.isArray(state.scout.results) ? state.scout.results : [];
+      state.scout.filters = Object.assign(defaults().scout.filters, state.scout.filters || {});
+      state.scout.watchlist = Array.isArray(state.scout.watchlist) ? state.scout.watchlist : [];
+      state.scout.history = state.scout.history && typeof state.scout.history === 'object' ? state.scout.history : {};
       state.settings = Object.assign(defaults().settings, state.settings || {});
     } catch (e) {
       state = defaults();
@@ -182,6 +193,49 @@ const Store = (() => {
     Object.assign(state.scout, patch);
     save();
   }
+  function saveScoutFilters(patch) {
+    Object.assign(state.scout.filters, patch);
+    save();
+  }
+  /* --- watchlist: ricerche sorvegliate --- */
+  function addWatch(data) {
+    const w = Object.assign({
+      id: Utils.uid(), q: '', maxPrice: 0, market: 'it', createdAt: Utils.today(),
+      lastMin: null, lastAvg: null, lastCheck: '', alerts: [],
+    }, data);
+    state.scout.watchlist.unshift(w);
+    save();
+    return w;
+  }
+  function getWatch(id) { return state.scout.watchlist.find(w => w.id === id) || null; }
+  function updateWatch(id, patch) {
+    const w = getWatch(id);
+    if (!w) return null;
+    Object.assign(w, patch);
+    save();
+    return w;
+  }
+  function removeWatch(id) {
+    state.scout.watchlist = state.scout.watchlist.filter(w => w.id !== id);
+    save();
+  }
+  /* --- storico del mercato (una fotografia per ricerca/giorno) --- */
+  function historyKey(q, market) {
+    return String(q || '').trim().toLowerCase() + '|' + (market || 'it');
+  }
+  function pushHistory(q, market, snap) {
+    const key = historyKey(q, market);
+    const list = Array.isArray(state.scout.history[key]) ? state.scout.history[key] : [];
+    const last = list[list.length - 1];
+    if (last && last.date === snap.date) list[list.length - 1] = snap;
+    else list.push(snap);
+    state.scout.history[key] = list.slice(-30);
+    save();
+  }
+  function historyFor(q, market) {
+    return state.scout.history[historyKey(q, market)] || [];
+  }
+
   function scoutCtx() {
     const s = state.scout;
     return {
@@ -231,7 +285,8 @@ const Store = (() => {
     load, save, seedSample, exportJSON, importJSON, reset,
     getItem, addItem, updateItem, deleteItem, markSold, reopen,
     getDeal, addDeal, updateDeal, deleteDeal,
-    saveScout, scoutCtx,
+    saveScout, saveScoutFilters, scoutCtx,
+    addWatch, getWatch, updateWatch, removeWatch, pushHistory, historyFor,
     cost, feeFor, profit, hasTarget, dashboardStats, soldSorted,
   };
 })();
