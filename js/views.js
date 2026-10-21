@@ -475,11 +475,18 @@ const Views = (() => {
           <input class="input num" name="resale" inputmode="decimal" value="${esc(s.resale || '')}" placeholder="es. 40"></div>
         <div class="field"><label>Margine desiderato %</label>
           <input class="input num" name="marginPct" inputmode="decimal" value="${esc(marginDefault)}"></div>
-        <div class="field"><label>URL ricerca Vinted (facoltativo)</label>
-          <input class="input" name="sourceUrl" value="${esc(s.sourceUrl)}" placeholder="incolla pure l'indirizzo della ricerca"></div>
         <div class="field span-2">
           <button type="button" class="btn btn-primary" data-action="scout-fetch" id="scout-fetch-btn">🔍 Cerca e valuta</button>
-          <p class="hint">I filtri di prezzo vengono applicati da Vinted; brand e taglia sui risultati. Se Vinted blocca la lettura automatica, incolla i risultati qui sotto.</p>
+          <button type="button" class="btn btn-ghost" data-action="scout-open-vinted" id="scout-open-btn">🔗 Apri su Vinted</button>
+          <p class="hint">Scrivi cosa cerchi e premi <b>Cerca e valuta</b>: Resellio legge gli annunci e ti dice se conviene comprare. Se Vinted blocca la lettura automatica, usa <b>Apri su Vinted</b> per cercare nel browser, poi incolla i risultati qui sotto.</p>
+        </div>
+
+        <div class="field span-2" style="margin-top:10px">
+          <button type="button" class="btn btn-ghost btn-sm" data-action="scout-toggle-advanced">⚙️ Opzioni avanzate</button>
+        </div>
+        <div id="scout-advanced" style="display:none;border-top:1px solid var(--line);padding-top:10px;margin-top:8px">
+          <div class="field span-2"><label>URL ricerca Vinted (opzionale)</label>
+            <input class="input" name="sourceUrl" value="${esc(s.sourceUrl)}" placeholder="https://www.vinted.it/catalog?search_text=…"></div>
         </div>
       </form>
       <div id="scout-status"></div>

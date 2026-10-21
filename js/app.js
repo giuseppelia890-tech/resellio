@@ -160,6 +160,24 @@ const App = (() => {
         break;
       }
 
+      case 'scout-open-vinted': {
+        const form = document.getElementById('scout-form');
+        const val = Utils.formValues(form);
+        const q = String(val.q || '').trim() || Scout.searchTextFromUrl(val.sourceUrl);
+        if (!q) { Utils.toast('Scrivi cosa vuoi cercare', 'err'); return; }
+        const filters = { priceMin: val.priceMin, priceMax: val.priceMax, brand: val.brand, taglia: val.taglia, market: val.market };
+        const url = Scout.catalogUrl(q, filters, val.sourceUrl);
+        window.open(url, '_blank', 'noopener');
+        Utils.toast('Ricerca aperta su Vinted 🔗', 'ok');
+        break;
+      }
+
+      case 'scout-toggle-advanced': {
+        const box = document.getElementById('scout-advanced');
+        if (box) box.style.display = box.style.display === 'none' ? '' : 'none';
+        break;
+      }
+
       case 'add-item': Modals.item(null); break;
       case 'edit-item': Modals.item(id); break;
       case 'sell-item': e.stopPropagation(); Modals.sell(id); break;
