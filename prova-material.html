@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Resellio — Material Design 3</title>
+<style>
+  /* ===== Material Design 3 — i colori tonali (Generato dal colore brand) ===== */
+  :root{
+    /* Sorgente: #0db1b6 → palette M3 */
+    --md-primary:#00696e;
+    --md-on-primary:#ffffff;
+    --md-primary-container:#9ff2f7;
+    --md-on-primary-container:#002021;
+    --md-surface:#f5fbfb;
+    --md-on-surface:#171d1d;
+    --md-surface-variant:#dce4e5;
+    --md-on-surface-variant:#3f4949;
+    --md-surface-container:#e9f0f0;
+    --md-surface-container-low:#eff6f6;
+    --md-surface-container-high:#e3eaea;
+    --md-outline:#6f7979;
+    --md-outline-variant:#bfc8c9;
+    --md-error:#ba1a1a;
+    --md-tertiary-container:#d3e8d4;
+    --md-on-tertiary-container:#0a200e;
+
+    /* forme M3 */
+    --r-xs:8px;--r-s:12px;--r-m:16px;--r-l:24px;--r-xl:28px;--r-full:999px;
+
+    /* ombre M3 (elevation) */
+    --e1:0 1px 2px rgba(0,0,0,.10),0 1px 3px rgba(0,0,0,.06);
+    --e2:0 1px 2px rgba(0,0,0,.10),0 2px 6px rgba(0,0,0,.08);
+    --e3:0 4px 8px rgba(0,0,0,.09),0 1px 3px rgba(0,0,0,.06);
+
+    --font:"Roboto",-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;font-family:var(--font);background:var(--md-surface);color:var(--md-on-surface);font-size:14px}
+
+  /* ===== Tipografia M3 ===== */
+  .t-display{font-size:32px;font-weight:400;letter-spacing:-.4px;line-height:1.15}
+  .t-title{font-size:22px;font-weight:500;line-height:1.25}
+  .t-headline{font-size:16px;font-weight:500;line-height:1.35}
+  .t-body{font-size:14px;font-weight:400;line-height:1.45;color:var(--md-on-surface-variant)}
+  .t-label{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--md-on-surface-variant)}
+
+  .wrap{max-width:1080px;margin:0 auto}
+  .gap{height:10px;background:var(--md-surface-container-high)}
+
+  /* ===== Top app bar M3 ===== */
+  .appbar{
+    position:sticky;top:0;z-index:10;background:var(--md-surface);
+    display:flex;align-items:center;gap:12px;padding:14px 16px 10px;
+  }
+  .appbar.scrolled{background:var(--md-surface-container);box-shadow:var(--e1)}
+  .appbar h1{margin:0;font-size:21px;font-weight:500;flex:1;letter-spacing:-.1px}
+  .iconbtn{
+    width:44px;height:44px;border-radius:var(--r-full);border:0;background:none;cursor:pointer;
+    display:grid;place-items:center;font-size:19px;color:var(--md-on-surface-variant);
+  }
+  .iconbtn:hover{background:var(--md-surface-container-high)}
+
+  /* ===== FAB M3 ===== */
+  .fab{
+    width:58px;height:58px;border-radius:var(--r-m);border:0;cursor:pointer;
+    background:var(--md-primary-container);color:var(--md-on-primary-container);
+    font-size:25px;display:grid;place-items:center;box-shadow:var(--e2);
+  }
+  .fab-ext{
+    height:58px;border-radius:var(--r-m);border:0;cursor:pointer;padding:0 20px 0 16px;
+    background:var(--md-primary-container);color:var(--md-on-primary-container);
+    font-size:15px;font-weight:600;font-family:var(--font);display:flex;align-items:center;gap:9px;
+    box-shadow:var(--e2);
+  }
+
+  /* ===== Card M3 ===== */
+  .card{
+    background:var(--md-surface-container-low);border-radius:var(--r-m);
+    box-shadow:var(--e1);overflow:hidden;
+  }
+  .card.outlined{background:var(--md-surface);border:1px solid var(--md-outline-variant);box-shadow:none}
+  .card.elevated{background:var(--md-surface-container-low);box-shadow:var(--e2)}
+  .card.filled{background:var(--md-surface-container-high);box-shadow:none}
+  .card-pad{padding:16px}
+  .card-head{display:flex;align-items:center;gap:12px;padding:16px 16px 12px}
+  .card-head .t-headline{flex:1}
+
+  /* ===== Bottoni M3 ===== */
+  .btn-m3{
+    height:40px;border-radius:var(--r-full);border:0;cursor:pointer;
+    padding:0 24px;font-size:14px;font-weight:600;font-family:var(--font);
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .btn-filled{background:var(--md-primary);color:var(--md-on-primary)}
+  .btn-tonal{background:var(--md-primary-container);color:var(--md-on-primary-container)}
+  .btn-outlined{background:transparent;color:var(--md-primary);border:1px solid var(--md-outline)}
+  .btn-text{background:transparent;color:var(--md-primary);padding:0 14px}
+
+  /* ===== Chip M3 ===== */
+  .chip-m3{
+    height:32px;border-radius:var(--r-xs);border:1px solid var(--md-outline-variant);
+    background:transparent;color:var(--md-on-surface-variant);padding:0 14px;font-size:13px;
+    font-weight:500;font-family:var(--font);cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+  }
+  .chip-m3.sel{background:var(--md-primary-container);border-color:transparent;color:var(--md-on-primary-container)}
+
+  /* ===== Navigation bar M3 (in basso) ===== */
+  .navbar{
+    position:sticky;bottom:0;z-index:20;background:var(--md-surface-container);
+    display:flex;padding:12px 4px 14px;box-shadow:0 -1px 3px rgba(0,0,0,.06);
+  }
+  .navit{
+    flex:1;border:0;background:none;cursor:pointer;display:flex;flex-direction:column;
+    align-items:center;gap:4px;font-family:var(--font);color:var(--md-on-surface-variant);
+    font-size:11.5px;font-weight:600;
+  }
+  .navit .ico{
+    width:64px;height:32px;border-radius:var(--r-full);display:grid;place-items:center;font-size:19px;
+  }
+  .navit.on{color:var(--md-on-surface)}
+  .navit.on .ico{background:var(--md-primary-container)}
+
+  /* ===== Le anteprime ===== */
+  h2.sec{margin:20px 16px 8px;font-size:15px;font-weight:600}
+  .hint{margin:0 16px 14px;font-size:13px;color:var(--md-on-surface-variant);line-height:1.55}
+  .inv-grid{padding:0 16px 16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .thumb{height:120px;background:linear-gradient(140deg,#c8dfe0,#a9cdcf);display:grid;place-items:center;font-size:38px}
+  .inv-body{padding:12px 12px 14px}
+  .badge{
+    display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;
+    background:var(--md-primary-container);color:var(--md-on-primary-container);
+    border-radius:var(--r-xs);padding:4px 9px;margin-bottom:8px;
+  }
+  .badge.green{background:var(--md-tertiary-container);color:var(--md-on-tertiary-container)}
+  .price{font-size:17px;font-weight:600;letter-spacing:-.2px}
+  .profit{font-size:12px;font-weight:600;color:#0f6b3f}
+
+  /* KPI grande */
+  .kpi{margin:0 16px 16px;background:var(--md-primary-container);color:var(--md-on-primary-container);border-radius:var(--r-l);padding:22px}
+  .kpi .t-label{color:var(--md-on-primary-container);opacity:.75}
+  .kpi b{display:block;font-size:36px;font-weight:500;letter-spacing:-1px;margin:6px 0 4px}
+  .row2{display:flex;gap:12px;padding:0 16px 16px}
+  .row2 .card{flex:1}
+  .mini{padding:15px}
+  .mini .t-label{margin-bottom:5px;display:block}
+  .mini b{font-size:20px;font-weight:500}
+
+  /* lista movimenti */
+  .list{padding:0 16px 16px;display:flex;flex-direction:column;gap:10px}
+  .item{display:flex;align-items:center;gap:14px;padding:12px}
+  .item .av{
+    width:52px;height:52px;border-radius:var(--r-m);flex:none;
+    background:var(--md-surface-container-high);display:grid;place-items:center;font-size:23px;
+  }
+  .item .txt{flex:1;min-width:0}
+  .item .txt b{display:block;font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .item .txt span{font-size:12.5px;color:var(--md-on-surface-variant)}
+  .item .right{text-align:right;flex:none}
+  .item .right b{font-size:14.5px;font-weight:600}
+  .item .right span{display:block;font-size:12.5px;color:var(--md-on-surface-variant)}
+
+  /* snackbar M3 */
+  .snackbar{
+    position:sticky;bottom:78px;margin:0 16px;background:#2f3536;color:#eff1f1;
+    border-radius:var(--r-xs);padding:14px 16px;font-size:13.5px;display:flex;align-items:center;gap:12px;
+    box-shadow:var(--e3);
+  }
+  .snackbar b{color:#9ff2f7;font-weight:600;margin-left:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ DASHBOARD ============ -->
+  <div class="appbar">
+    <h1>Dashboard</h1>
+    <button class="iconbtn" title="Backup">☁️</button>
+    <button class="iconbtn" title="Impostazioni">⚙️</button>
+  </div>
+
+  <div class="kpi">
+    <span class="t-label">Guadagno questo mese</span>
+    <b>112,40 €</b>
+    <span class="t-body" style="color:var(--md-on-primary-container);opacity:.8">4 vendite · 3 articoli ancora in vendita</span>
+  </div>
+
+  <div class="row2">
+    <div class="card filled"><div class="mini">
+      <span class="t-label">Investito</span><b>71,50 €</b>
+    </div></div>
+    <div class="card filled"><div class="mini">
+      <span class="t-label">Guadagno potenziale</span><b>86,00 €</b>
+    </div></div>
+  </div>
+
+  <h2 class="sec">Ultimi movimenti</h2>
+  <div class="list">
+    <div class="card elevated item">
+      <div class="av">🧥</div>
+      <div class="txt"><b>Felpa Carhartt WIP</b><span>Venduta ieri</span></div>
+      <div class="right"><b style="color:#0f6b3f">+25,99 €</b><span>39,99 €</span></div>
+    </div>
+    <div class="card elevated item">
+      <div class="av">🧣</div>
+      <div class="txt"><b>Sciarpa Zara</b><span>In vendita</span></div>
+      <div class="right"><span>14,99 €</span></div>
+    </div>
+  </div>
+
+  <div class="snackbar">Articolo salvato ✓ <b>ANNULLA</b></div>
+
+  <div class="navbar">
+    <button class="navit on"><span class="ico">📊</span>Home</button>
+    <button class="navit"><span class="ico">🧥</span>Inventario</button>
+    <button class="navit"><span class="ico">🧮</span>Prezzi</button>
+    <button class="navit"><span class="ico">💰</span>Vendite</button>
+    <button class="navit"><span class="ico">🔍</span>Caccia</button>
+  </div>
+
+  <div class="gap"></div>
+
+  <!-- ============ INVENTARIO ============ -->
+  <div class="appbar">
+    <h1>Inventario</h1>
+    <button class="iconbtn">🔎</button>
+  </div>
+
+  <div style="padding:0 16px 12px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="chip-m3 sel">✓ Tutti</button>
+    <button class="chip-m3">In vendita</button>
+    <button class="chip-m3">Da pubblicare</button>
+    <button class="chip-m3">Venduti</button>
+  </div>
+
+  <div class="inv-grid">
+    <div class="card elevated">
+      <div class="thumb">🧥</div>
+      <div class="inv-body">
+        <span class="badge">🛍️ In vendita</span>
+        <div style="font-size:13.5px;font-weight:600;margin-bottom:6px">Felpa Carhartt WIP</div>
+        <div class="price">39,99 €</div>
+        <div class="profit">+25,99 € guadagno</div>
+      </div>
+    </div>
+    <div class="card elevated">
+      <div class="thumb">👟</div>
+      <div class="inv-body">
+        <span class="badge green">💰 Venduto</span>
+        <div style="font-size:13.5px;font-weight:600;margin-bottom:6px">Sneakers New Balance 574</div>
+        <div class="price">54,99 €</div>
+        <div class="profit">+28,99 € guadagno</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:0 16px 20px;display:flex;gap:10px">
+    <button class="btn-m3 btn-filled">＋ Nuovo articolo</button>
+    <button class="btn-m3 btn-tonal">🧮 Calcola prezzo</button>
+  </div>
+
+  <div class="gap"></div>
+
+  <!-- ============ DETTAGLIO ARTICOLO ============ -->
+  <div class="appbar">
+    <button class="iconbtn">←</button>
+    <h1 style="font-size:18px">Felpa Carhartt WIP</h1>
+    <button class="iconbtn">✏️</button>
+  </div>
+
+  <div style="padding:0 16px 14px">
+    <div class="thumb" style="height:190px;border-radius:var(--r-l)">🧥</div>
+  </div>
+
+  <div style="padding:0 16px 16px;display:flex;gap:10px">
+    <button class="fab-ext" style="flex:1">💰 <span style="flex:1;text-align:left">Segna come venduto</span></button>
+  </div>
+
+  <div class="list">
+    <div class="card outlined">
+      <div class="card-pad">
+        <span class="t-label">Prezzo di vendita</span>
+        <div class="t-display" style="margin:4px 0 10px">39,99 €</div>
+        <span class="t-label">Costo totale</span>
+        <div style="font-size:16px;font-weight:600;margin-bottom:12px">14,00 €</div>
+        <div style="height:1px;background:var(--md-outline-variant);margin:0 0 12px"></div>
+        <span class="t-label">Guadagno netto</span>
+        <div style="font-size:22px;font-weight:600;color:#0f6b3f">+25,99 €</div>
+        <div style="font-size:12.5px;color:var(--md-on-surface-variant);margin-top:2px">margine 65% · ROI 186%</div>
+      </div>
+    </div>
+
+    <div class="card elevated">
+      <div class="card-head">
+        <span style="font-size:18px">✨</span>
+        <div class="t-headline">Analisi prezzo</div>
+      </div>
+      <div style="padding:0 16px 16px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="card filled" style="padding:12px">
+            <span class="t-label" style="font-size:10px">Prezzo suggerito</span>
+            <div style="font-size:17px;font-weight:600;margin-top:2px">23,99 €</div>
+          </div>
+          <div class="card filled" style="padding:12px">
+            <span class="t-label" style="font-size:10px">Pareggio</span>
+            <div style="font-size:17px;font-weight:600;margin-top:2px">14,00 €</div>
+          </div>
+        </div>
+        <button class="btn-m3 btn-tonal" style="margin-top:12px;width:100%">Usa il prezzo suggerito</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="navbar">
+    <button class="navit"><span class="ico">📊</span>Home</button>
+    <button class="navit on"><span class="ico">🧥</span>Inventario</button>
+    <button class="navit"><span class="ico">🧮</span>Prezzi</button>
+    <button class="navit"><span class="ico">💰</span>Vendite</button>
+    <button class="navit"><span class="ico">🔍</span>Caccia</button>
+  </div>
+
+</div>
+
+<script>
+  // Effetto "scroll" della top app bar M3
+  addEventListener('scroll', () => {
+    document.querySelectorAll('.appbar').forEach(b => {
+      const r = b.getBoundingClientRect();
+      b.classList.toggle('scrolled', r.top <= 0);
+    });
+  }, { passive: true });
+</script>
+</body>
+</html>
