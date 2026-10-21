@@ -222,8 +222,27 @@ button{font-family:inherit;color:inherit}
 .sw.on{background:var(--brand-500);box-shadow:var(--glow-cta)}
 .sw.on::after{transform:translateX(20px)}
 
+/* ============ indice delle schermate (solo per la prova) ============ */
+.jump{
+  position:sticky;top:0;z-index:60;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
+  padding:12px 16px;background:rgba(9,9,11,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);
+}
+.jump::-webkit-scrollbar{display:none}
+.jump a{
+  flex:none;text-decoration:none;font-size:12.5px;font-weight:600;color:var(--ink-2);
+  border:1px solid var(--line);border-radius:var(--r-full);padding:7px 13px;background:var(--surface-1);
+}
+.jump a:active{background:var(--brand-500);color:#fff;border-color:var(--brand-500)}
+
+/* etichetta di ogni schermata nella prova */
+.screen-tag{
+  margin:22px 16px 10px;display:flex;align-items:center;gap:9px;
+  font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--brand-300);
+}
+.screen-tag::after{content:"";flex:1;height:1px;background:var(--line)}
+
 /* ============ login ============ */
-.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px;position:relative;overflow:hidden}
+.login-page{min-height:auto;display:flex;align-items:center;justify-content:center;padding:30px 22px;position:relative;overflow:hidden}
 .login-page::before{
   content:"";position:absolute;top:-30%;left:50%;transform:translateX(-50%);
   width:560px;height:560px;border-radius:50%;
@@ -269,9 +288,16 @@ button{font-family:inherit;color:inherit}
 </style>
 </head>
 <body>
+<div class="jump">
+  <a href="#s-login">Login</a>
+  <a href="#s-home">Dashboard</a>
+  <a href="#s-inv">Inventario</a>
+  <a href="#s-det">Dettaglio</a>
+</div>
 <div class="wrap">
 
   <!-- =================== LOGIN =================== -->
+  <div class="screen-tag" id="s-login">1 · Login</div>
   <div class="login-page">
     <div class="login-card">
       <div class="login-logo">🏷️</div>
@@ -295,6 +321,7 @@ button{font-family:inherit;color:inherit}
   <div class="gap"></div>
 
   <!-- =================== DASHBOARD =================== -->
+  <div class="screen-tag" id="s-home">2 · Dashboard</div>
   <div class="appbar">
     <h1>Dashboard</h1>
     <button class="iconbtn">☁️</button>
@@ -348,6 +375,7 @@ button{font-family:inherit;color:inherit}
   <div class="gap"></div>
 
   <!-- =================== INVENTARIO =================== -->
+  <div class="screen-tag" id="s-inv">3 · Inventario</div>
   <div class="appbar">
     <h1>Inventario</h1>
     <button class="iconbtn">🔎</button>
@@ -409,6 +437,7 @@ button{font-family:inherit;color:inherit}
   <div class="gap"></div>
 
   <!-- =================== DETTAGLIO =================== -->
+  <div class="screen-tag" id="s-det">4 · Dettaglio articolo</div>
   <div class="appbar">
     <button class="iconbtn">←</button>
     <h1 style="font-size:17px">Felpa Carhartt WIP</h1>
