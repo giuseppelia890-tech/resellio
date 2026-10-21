@@ -11,6 +11,7 @@ const Views = (() => {
     return `<span class="badge b-gray">${esc(Store.FONTI[fonte] || '—')}</span>`;
   }
   const CAT_ICON = { Scarpe: '👟', Borsa: '👜', Cappello: '🧢', Jeans: '👖', Pantalone: '👖', Gonna: '👗', Vestito: '👗', 'Abito da sera': '👗', Giacca: '🧥', Giubbotto: '🧥', Felpa: '👕', 'T-shirt': '👕', Camicia: '👕' };
+  const STATUS_COLOR = { da_fotografare: '#f59e0b', da_pubblicare: '#8b7cf6', in_vendita: '#2aa3ae', venduto: '#10b981' };
   function photo(it) {
     if (it.foto) return `<img src="${it.foto}" alt="${esc(it.nome)}" loading="lazy">`;
     return `<span>${CAT_ICON[it.categoria] || '🧺'}</span>`;
@@ -68,6 +69,23 @@ const Views = (() => {
     <div class="sec reveal">Ultimi movimenti <span class="more" data-view="inventory">Tutti ›</span></div>
     <div class="list">
       ${recent.length ? recent.map(itemRow).join('') : `<div class="item"><div class="av">🧺</div><div class="it-txt"><b>Nessun articolo</b><span>Aggiungi il tuo primo capo</span></div></div>`}
+    </div>
+
+    <div class="grid-2" style="margin-top:6px">
+      <div class="card reveal">
+        <div class="card-head"><div class="ttl">Profitto ultimi 6 mesi</div></div>
+        ${Utils.chart(d.months, [{ name: 'Profitto', color: '#007782', values: d.months.map(m => Math.round(m.profit * 100) / 100) }])}
+      </div>
+      <div class="card reveal">
+        <div class="card-head"><div class="ttl">Stato inventario</div>
+          <span class="muted small">${d.activeCount} attivi</span></div>
+        <div class="segbar">
+          ${Object.keys(Store.STATI).map(k => d.statusCounts[k] ? `<div style="width:${(d.statusCounts[k] / segTot * 100).toFixed(1)}%;background:${STATUS_COLOR[k]}" title="${Store.STATI[k].label}: ${d.statusCounts[k]}"></div>` : '').join('')}
+        </div>
+        <div class="segbar-legend">
+          ${Object.keys(Store.STATI).map(k => `<div class="row"><i style="background:${STATUS_COLOR[k]}"></i>${Store.STATI[k].emoji} ${Store.STATI[k].label}<b>${d.statusCounts[k]}</b></div>`).join('')}
+        </div>
+      </div>
     </div>
 
     <div class="center"><button class="fab" data-action="add-item">＋</button></div>`;

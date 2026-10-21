@@ -483,7 +483,7 @@ input[type="date"]{color-scheme:dark}
 .inv{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .inv .card{padding:0;border-radius:var(--r-m);overflow:hidden;cursor:pointer}
 .inv .card:hover{transform:translateY(-3px);border-color:var(--line-2);box-shadow:var(--shadow)}
-.inv .thumb{height:130px;border-radius:0;font-size:36px}
+.inv .thumb{height:130px;border-radius:0;font-size:42px}
 .inv-body{padding:11px 12px 13px}
 .inv-body .nm{
   font-size:13px;font-weight:600;line-height:1.3;margin-bottom:7px;
@@ -918,7 +918,8 @@ body.locked{overflow:hidden}
 }
 .btn-google:hover{filter:brightness(.96)}
 .btn-google:active{transform:scale(.98)}
-.g-logo{font-weight:800;font-size:15px}
+.g-logo{width:19px;height:19px;border-radius:50%;background:conic-gradient(from -45deg,#ea4335 110deg,#4285f4 90deg 180deg,#34a853 180deg 270deg,#fbbc05 270deg);display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff;flex:none}
+.trust{margin-top:16px;font-size:11.5px;color:var(--ink-mute);display:flex;align-items:center;justify-content:center;gap:7px}
 .login-sep{
   display:flex;align-items:center;gap:12px;color:var(--ink-mute);
   font-size:11px;text-transform:uppercase;letter-spacing:.7px;
@@ -968,6 +969,9 @@ body.locked{overflow:hidden}
   margin:18px 0 0;padding-top:16px;border-top:1px solid var(--line);
   color:var(--ink-mute);font-size:11.5px;line-height:1.6;text-align:left;
 }
+
+/* il pulsante flottante al centro serve solo sul telefono */
+@media (min-width:900px){.center{display:none}}
 
 /* ===== 23. Adattamento allo schermo ===== */
 /* Schermi medi: restringo le griglie */
@@ -1069,9 +1073,11 @@ body.locked{overflow:hidden}
   .c-actions .icon-btn{width:38px;height:38px;font-size:15px}
   .scout-card{flex-direction:column;padding:15px}
   .scout-thumb{width:100%;height:150px;font-size:34px}
-  .chips,.deal-status{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
-  .chips::-webkit-scrollbar,.deal-status::-webkit-scrollbar{display:none}
-  .chip,.status-pill{flex:none}
+  .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:none}
+  .deal-status{flex-wrap:wrap}
+  .deal-status .status-pill{flex:1 1 auto;text-align:center;justify-content:center}
   .card-head{flex-wrap:wrap}
 }
 
