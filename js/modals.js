@@ -502,10 +502,16 @@ const Modals = (() => {
         <button class="icon-btn" data-action="close-modal" aria-label="Chiudi">✕</button></div>
       <div class="modal-body">
         <div class="list">
+          <button class="item" data-action="add-item"><div class="av">＋</div>
+            <div class="it-txt"><b>Nuovo articolo</b><span>Aggiungi un capo all'inventario</span></div></button>
           <button class="item" data-view="shopping"><div class="av">🛒</div>
             <div class="it-txt"><b>Lista acquisti</b><span>Occasioni da comprare e trattare</span></div></button>
           <button class="item" data-view="generator"><div class="av">✍️</div>
             <div class="it-txt"><b>Genera annuncio</b><span>Titolo, descrizione e hashtag pronti</span></div></button>
+          <button class="item" data-action="export"><div class="av">⬇️</div>
+            <div class="it-txt"><b>Esporta backup</b><span>Salva una copia dei tuoi dati</span></div></button>
+          ${Auth.lockSet() ? `<button class="item" data-action="lock-app"><div class="av">🔒</div>
+            <div class="it-txt"><b>Blocca l'app</b><span>Chiedi la password alla prossima apertura</span></div></button>` : ''}
           <button class="item" data-action="settings"><div class="av">⚙️</div>
             <div class="it-txt"><b>Impostazioni</b><span>Commissioni, margine, backup, account</span></div></button>
         </div>

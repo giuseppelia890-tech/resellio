@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/styles.css?v=6">
 </head>
 <body>
 <div class="app">
@@ -52,10 +52,11 @@
       </div>
       <div class="topbar-actions">
         <span id="sync-state" class="sync-state" title="" hidden></span>
+        <button class="icon-btn only-mobile" data-action="more-menu" title="Altro" aria-label="Altro">⋯</button>
         <button class="icon-btn" data-action="settings" title="Impostazioni" aria-label="Impostazioni">⚙️</button>
-        <button class="icon-btn" data-action="export" title="Scarica un backup dei tuoi dati" aria-label="Esporta backup">⬇️</button>
-        <button class="icon-btn" id="btn-lock" data-action="lock-app" title="Blocca l'app con la password" aria-label="Blocca l'app" hidden>🔒</button>
-        <button class="btn btn-primary" data-action="add-item" aria-label="Nuovo articolo">＋<span class="hide-sm"> Nuovo articolo</span></button>
+        <button class="icon-btn hide-mobile" data-action="export" title="Scarica un backup dei tuoi dati" aria-label="Esporta backup">⬇️</button>
+        <button class="icon-btn hide-mobile" id="btn-lock" data-action="lock-app" title="Blocca l'app con la password" aria-label="Blocca l'app" hidden>🔒</button>
+        <button class="btn btn-primary hide-mobile" data-action="add-item">＋ Nuovo articolo</button>
       </div>
     </header>
     <section class="view" id="view"></section>
@@ -68,7 +69,6 @@
     <button class="bottom-item" data-view="calculator"><span>🧮</span><small>Prezzi</small></button>
     <button class="bottom-item" data-view="sales"><span>💰</span><small>Vendite</small></button>
     <button class="bottom-item" data-view="scouting"><span>🔍</span><small>Caccia</small></button>
-    <button class="bottom-item" data-action="more-menu"><span>⋯</span><small>Altro</small></button>
   </nav>
 
 </div>
@@ -124,15 +124,15 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
-<script src="js/firebase-config.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/store.js"></script>
-<script src="js/generator.js"></script>
-<script src="js/scout.js"></script>
-<script src="js/views.js"></script>
-<script src="js/modals.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/cloud.js"></script>
-<script src="js/app.js"></script>
+<script src="js/firebase-config.js?v=6"></script>
+<script src="js/utils.js?v=6"></script>
+<script src="js/store.js?v=6"></script>
+<script src="js/generator.js?v=6"></script>
+<script src="js/scout.js?v=6"></script>
+<script src="js/views.js?v=6"></script>
+<script src="js/modals.js?v=6"></script>
+<script src="js/auth.js?v=6"></script>
+<script src="js/cloud.js?v=6"></script>
+<script src="js/app.js?v=6"></script>
 </body>
 </html>

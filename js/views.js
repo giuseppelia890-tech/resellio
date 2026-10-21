@@ -56,7 +56,7 @@ const Views = (() => {
     <div class="kpi reveal">
       <span class="label">Guadagno questo mese</span>
       <b class="${d.monthProfit >= 0 ? 'up' : 'down'}">${money(d.monthProfit)}</b>
-      <span class="sub">${d.monthSales} vendite · ${money(d.monthRevenue)} di ricavi</span>
+      <span class="sub">${d.monthSales === 1 ? '1 vendita' : d.monthSales + ' vendite'} · ${money(d.monthRevenue)} di ricavi</span>
       <div class="bar"><i style="width:${bar}%"></i></div>
     </div>
 
@@ -71,7 +71,7 @@ const Views = (() => {
       ${recent.length ? recent.map(itemRow).join('') : `<div class="item"><div class="av">🧺</div><div class="it-txt"><b>Nessun articolo</b><span>Aggiungi il tuo primo capo</span></div></div>`}
     </div>
 
-    <div class="grid-2" style="margin-top:6px">
+    <div class="grid-2 hide-mobile" style="margin-top:6px">
       <div class="card reveal">
         <div class="card-head"><div class="ttl">Profitto ultimi 6 mesi</div></div>
         ${Utils.chart(d.months, [{ name: 'Profitto', color: '#007782', values: d.months.map(m => Math.round(m.profit * 100) / 100) }])}
@@ -100,8 +100,9 @@ const Views = (() => {
 
   function inventory() {
     const c = invCounts();
-    const chips = [['tutti', '✓ Tutti', ''], ...Object.keys(Store.STATI).map(k => [k, `${Store.STATI[k].emoji} ${Store.STATI[k].label}`, k])]
-      .map(([v, l]) => `<button class="chip ${App.ui.inv.stato === v ? 'on' : ''}" data-action="inv-status" data-status="${v}">${l}${v === 'tutti' ? '' : ` (${c[v] ?? 0})`}</button>`).join('');
+    const ordine = ['in_vendita', 'da_pubblicare', 'da_fotografare', 'venduto'];
+    const chips = [['tutti', '✓ Tutti'], ...ordine.map(k => [k, Store.STATI[k].label])]
+      .map(([v, l]) => `<button class="chip ${App.ui.inv.stato === v ? 'on' : ''}" data-action="inv-status" data-status="${v}">${l}</button>`).join('');
     return `
     <div class="inv-toolbar" style="margin-bottom:12px">
       <div class="search-box" style="max-width:none"><input class="input" data-filter="q" value="${esc(App.ui.inv.q)}" placeholder="Cerca per nome, brand, taglia…"></div>
@@ -151,10 +152,8 @@ const Views = (() => {
       <div class="thumb item-photo">${it.foto ? `<img src="${esc(it.foto)}" alt="${esc(it.nome)}">` : icon}${badge}</div>
       <div class="inv-body item-body">
         <div class="nm item-name">${esc(it.nome)}</div>
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
-          <div class="price">${prezzo ? money(prezzo) : '—'}</div>
-          ${attivo && prof > 0 ? `<div class="gain">+${money(prof)}</div>` : (!attivo && prof > 0 ? `<div class="gain">+${money(prof)}</div>` : '')}
-        </div>
+        <div class="price">${prezzo ? money(prezzo) : '—'}</div>
+        ${prof > 0 ? `<div class="gain">+${money(prof)} guadagno</div>` : ''}
       </div>
       <div class="item-actions" style="display:none">
         ${it.link ? `<button class="icon-btn" title="Apri annuncio" data-action="open-link" data-href="${esc(it.link)}">🔗</button>` : ''}
