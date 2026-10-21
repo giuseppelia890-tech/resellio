@@ -83,8 +83,13 @@ const App = (() => {
       Utils.toast(`${items.length} annunci trovati e valutati 🔎`, 'ok');
       setTimeout(() => {
         const el = document.getElementById('scout-results');
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < 120) {
+            window.scrollTo({ top: window.scrollY + rect.top - 120, behavior: 'smooth' });
+          }
+        }
+      }, 250);
     } else {
       status.innerHTML = `<div class="scout-warning">⚠️ Vinted blocca il recupero automatico dei risultati dal browser.<br>
         È normale! Incolla qui sotto i risultati copiati dalla ricerca: li analizzo lo stesso 👇</div>`;

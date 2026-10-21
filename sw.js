@@ -1,5 +1,5 @@
 /* ===== Resellio — service worker: funziona anche offline ===== */
-const CACHE = 'resellio-v9';
+const CACHE = 'resellio-v10';
 const ASSETS = [
   './',
   './index.html',
