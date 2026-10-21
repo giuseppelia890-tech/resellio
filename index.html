@@ -55,22 +55,20 @@
         <button class="icon-btn" data-action="settings" title="Impostazioni" aria-label="Impostazioni">⚙️</button>
         <button class="icon-btn" data-action="export" title="Scarica un backup dei tuoi dati" aria-label="Esporta backup">⬇️</button>
         <button class="icon-btn" id="btn-lock" data-action="lock-app" title="Blocca l'app con la password" aria-label="Blocca l'app" hidden>🔒</button>
-        <button class="btn btn-primary hide-sm" data-action="add-item">＋ Nuovo articolo</button>
+        <button class="btn btn-primary" data-action="add-item" aria-label="Nuovo articolo">＋<span class="hide-sm"> Nuovo articolo</span></button>
       </div>
     </header>
     <section class="view" id="view"></section>
   </main>
 
-  <button class="fab-mobile" data-action="add-item" aria-label="Nuovo articolo">＋</button>
 
   <nav class="bottom-nav" aria-label="Navigazione mobile">
     <button class="bottom-item" data-view="dashboard"><span>📊</span><small>Home</small></button>
     <button class="bottom-item" data-view="inventory"><span>🧥</span><small>Inventario</small></button>
     <button class="bottom-item" data-view="calculator"><span>🧮</span><small>Prezzi</small></button>
     <button class="bottom-item" data-view="sales"><span>💰</span><small>Vendite</small></button>
-    <button class="bottom-item" data-view="shopping"><span>🛒</span><small>Acquisti</small></button>
     <button class="bottom-item" data-view="scouting"><span>🔍</span><small>Caccia</small></button>
-    <button class="bottom-item" data-view="generator"><span>✍️</span><small>Annuncio</small></button>
+    <button class="bottom-item" data-action="more-menu"><span>⋯</span><small>Altro</small></button>
   </nav>
 
 </div>

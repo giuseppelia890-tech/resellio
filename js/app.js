@@ -84,7 +84,7 @@ const App = (() => {
   /* --- Delegazione globale click --- */
   function onClick(e) {
     const viewEl = e.target.closest('[data-view]');
-    if (viewEl) { go(viewEl.dataset.view); return; }
+    if (viewEl) { Modals.close(); go(viewEl.dataset.view); return; }
     const aEl = e.target.closest('[data-action]');
     if (!aEl) return;
     const a = aEl.dataset.action;
@@ -92,6 +92,7 @@ const App = (() => {
 
     switch (a) {
       case 'close-modal': Modals.close(); break;
+      case 'more-menu': Modals.more(); break;
 
       case 'add-item': Modals.item(null); break;
       case 'edit-item': Modals.item(id); break;

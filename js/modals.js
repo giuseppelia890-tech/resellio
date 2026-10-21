@@ -42,6 +42,27 @@ const Modals = (() => {
   }
 
   /* --- Articolo (nuovo / modifica) --- */
+  /* Riquadro in cima al dettaglio articolo: guadagno, barra costo/vendita, azione rapida */
+  function itemHero(it) {
+    const attivo = it.stato !== 'venduto';
+    const costo = Store.cost(it);
+    const prezzo = attivo ? num(it.prezzoVendita) : num(it.prezzoVenduto);
+    const prof = Store.profit(it);
+    const margine = prezzo > 0 ? prof / prezzo * 100 : 0;
+    const roi = costo > 0 ? prof / costo * 100 : 0;
+    const pct = prezzo > 0 ? Math.min(100, Math.max(0, Math.round(costo / prezzo * 100))) : 0;
+    return `<div class="detail-hero">
+      <span class="label">${attivo ? 'Guadagno potenziale' : 'Guadagno netto'}</span>
+      <div class="gain-big ${prof >= 0 ? 'up' : 'down'}">${prof >= 0 ? '+' : ''}${money(prof)}</div>
+      <div class="muted small">margine ${margine.toFixed(0)}% · ROI ${roi.toFixed(0)}%</div>
+      <div class="bar" style="margin-top:14px"><i style="width:${pct}%"></i></div>
+      <div class="spread muted small" style="margin-top:9px">
+        <span>Costo ${money(costo)}</span><span>${attivo ? 'Vendita' : 'Venduto'} ${prezzo ? money(prezzo) : '—'}</span>
+      </div>
+      ${attivo ? `<button type="button" class="btn btn-primary btn-block" style="margin-top:14px" data-action="sell-item" data-id="${esc(it.id)}">💰 Segna come venduto</button>` : ''}
+    </div>`;
+  }
+
   function item(id, opts = {}) {
     const existing = id ? Store.getItem(id) : null;
     const base = {
@@ -62,15 +83,16 @@ const Modals = (() => {
       <div class="modal-head"><h2>${existing ? '✏️ Modifica articolo' : '＋ Nuovo articolo'}</h2>
         <button class="icon-btn" data-action="close-modal" aria-label="Chiudi">✕</button></div>
       <div class="modal-body">
+        ${existing ? itemHero(existing) : ''}
         <form id="item-form">
           <div class="form-grid">
             <div class="field span-2">
               <label>Foto</label>
-              <div class="photo-row">
-                <div class="photo-preview" id="foto-preview">${foto ? `<img src="${foto}" alt="">` : '📷'}</div>
-                <div class="photo-ctrls">
-                  <label class="btn btn-ghost btn-sm">📂 Scegli foto<input type="file" accept="image/*" id="foto-input" hidden></label>
-                  <button type="button" class="btn btn-ghost btn-sm" id="foto-remove">Rimuovi foto</button>
+              <div class="hero-photo">
+                <div class="thumb" id="foto-preview">${foto ? `<img src="${foto}" alt="">` : '📷'}</div>
+                <div class="hero-side">
+                  <label class="btn btn-tonal btn-sm">📷 ${foto ? 'Cambia foto' : 'Scegli foto'}<input type="file" accept="image/*" id="foto-input" hidden></label>
+                  <button type="button" class="btn btn-ghost btn-sm" id="foto-remove">Rimuovi</button>
                   <p class="hint">Foto chiara con sfondo neutro: viene ridimensionata e salvata sul dispositivo.</p>
                 </div>
               </div>
@@ -473,5 +495,22 @@ const Modals = (() => {
     });
   }
 
-  return { open, close, confirm, item, sell, deal, settings };
+  /* --- Menù "Altro" (telefono): le voci che non stanno nella barra in basso --- */
+  function more() {
+    open(`
+      <div class="modal-head"><h2>Altro</h2>
+        <button class="icon-btn" data-action="close-modal" aria-label="Chiudi">✕</button></div>
+      <div class="modal-body">
+        <div class="list">
+          <button class="item" data-view="shopping"><div class="av">🛒</div>
+            <div class="it-txt"><b>Lista acquisti</b><span>Occasioni da comprare e trattare</span></div></button>
+          <button class="item" data-view="generator"><div class="av">✍️</div>
+            <div class="it-txt"><b>Genera annuncio</b><span>Titolo, descrizione e hashtag pronti</span></div></button>
+          <button class="item" data-action="settings"><div class="av">⚙️</div>
+            <div class="it-txt"><b>Impostazioni</b><span>Commissioni, margine, backup, account</span></div></button>
+        </div>
+      </div>`);
+  }
+
+  return { open, close, confirm, item, sell, deal, settings, more };
 })();

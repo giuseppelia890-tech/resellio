@@ -85,6 +85,20 @@ const Views = (() => {
     const chips = [['tutti', '✓ Tutti', ''], ...Object.keys(Store.STATI).map(k => [k, `${Store.STATI[k].emoji} ${Store.STATI[k].label}`, k])]
       .map(([v, l]) => `<button class="chip ${App.ui.inv.stato === v ? 'on' : ''}" data-action="inv-status" data-status="${v}">${l}${v === 'tutti' ? '' : ` (${c[v] ?? 0})`}</button>`).join('');
     return `
+    <div class="inv-toolbar" style="margin-bottom:12px">
+      <div class="search-box" style="max-width:none"><input class="input" data-filter="q" value="${esc(App.ui.inv.q)}" placeholder="Cerca per nome, brand, taglia…"></div>
+      <div class="toolbar-right">
+        <select class="select" data-filter="fonte">
+          <option value="tutte">Tutte le fonti</option>
+          ${Object.entries(Store.FONTI).map(([k, v]) => `<option value="${k}" ${App.ui.inv.fonte === k ? 'selected' : ''}>${v}</option>`).join('')}
+        </select>
+        <select class="select" data-filter="sort">
+          <option value="recenti" ${App.ui.inv.sort === 'recenti' ? 'selected' : ''}>Più recenti</option>
+          <option value="prezzo" ${App.ui.inv.sort === 'prezzo' ? 'selected' : ''}>Prezzo più alto</option>
+          <option value="nome" ${App.ui.inv.sort === 'nome' ? 'selected' : ''}>Nome (A-Z)</option>
+        </select>
+      </div>
+    </div>
     <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 14px">
       ${chips}
     </div>
@@ -144,7 +158,7 @@ const Views = (() => {
         hasAny ? '' : `<button class="btn btn-primary" data-action="add-item">＋ Nuovo articolo</button>
           <button class="btn btn-ghost" data-action="load-sample">✨ Carica dati di esempio</button>`);
     }
-    return `<div class="inv inv-grid">${list.map(itemCard).join('')}</div>`;
+    return `<div class="inv">${list.map(itemCard).join('')}</div>`;
   }
 
   /* --- vendite --- */
@@ -171,29 +185,35 @@ const Views = (() => {
     });
 
     return `
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-ico">💰</div><div><div class="stat-label">Ricavi</div><div class="stat-value">${money(ricavi)}</div><div class="stat-sub">${sold.length} vendite</div></div></div>
-      <div class="stat-card"><div class="stat-ico g">📈</div><div><div class="stat-label">Profitto netto</div><div class="stat-value ${profitto >= 0 ? 'pos' : 'neg'}">${money(profitto)}</div><div class="stat-sub">dopo costi e commissioni</div></div></div>
-      <div class="stat-card"><div class="stat-ico p">📊</div><div><div class="stat-label">Margine medio</div><div class="stat-value">${margine.toFixed(0)}%</div><div class="stat-sub">sui ricavi</div></div></div>
-      <div class="stat-card"><div class="stat-ico w">🗂️</div><div>
-        <div class="stat-label">Periodo</div>
-        <select class="select" data-filter="sales-period" style="margin-top:4px">
-          ${Object.entries(PERIODI).map(([k, v]) => `<option value="${k}" ${k === p ? 'selected' : ''}>${v}</option>`).join('')}
-        </select></div>
+    <div class="kpi reveal">
+      <span class="label">Profitto netto · ${PERIODI[p]}</span>
+      <b class="${profitto >= 0 ? 'up' : 'down'}">${money(profitto)}</b>
+      <span class="sub">${sold.length} vendite · ${money(ricavi)} di ricavi</span>
+      <div class="bar"><i style="width:${Math.min(100, Math.max(0, margine))}%"></i></div>
+    </div>
+
+    <div class="row3 reveal" style="margin-top:11px">
+      <div class="mini"><span class="label">Ricavi</span><b>${money(ricavi)}</b></div>
+      <div class="mini"><span class="label">Margine</span><b>${margine.toFixed(0)}%</b></div>
+      <div class="mini"><span class="label">Vendite</span><b>${sold.length}</b></div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-head"><div class="ttl">Andamento ultimi 6 mesi</div>
+        <div class="legend"><span><i style="background:#4fb8c2"></i>Ricavi</span><span><i style="background:#007782"></i>Profitto</span></div></div>
+      <div style="padding:0 4px 4px">
+        ${Utils.chart(months, [
+          { name: 'Ricavi', color: '#4fb8c2', values: months.map(m => Math.round(m.revenue * 100) / 100) },
+          { name: 'Profitto', color: '#007782', values: months.map(m => Math.round(m.profit * 100) / 100) },
+        ])}
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-head"><div class="card-title">Andamento ultimi 6 mesi</div>
-        <div class="legend"><span><i style="background:#cfe9ea"></i>Ricavi</span><span><i style="background:#0db1b6"></i>Profitto</span></div></div>
-      ${Utils.chart(months, [
-        { name: 'Ricavi', color: '#cfe9ea', values: months.map(m => Math.round(m.revenue * 100) / 100) },
-        { name: 'Profitto', color: '#0db1b6', values: months.map(m => Math.round(m.profit * 100) / 100) },
-      ])}
-    </div>
-
-    <div class="card">
-      <div class="card-head"><div class="card-title">Storico vendite</div></div>
+    <div class="card reveal">
+      <div class="card-head"><div class="ttl">Storico vendite</div>
+        <select class="select" data-filter="sales-period" style="width:auto;padding-top:8px;padding-bottom:8px">
+          ${Object.entries(PERIODI).map(([k, v]) => `<option value="${k}" ${k === p ? 'selected' : ''}>${v}</option>`).join('')}
+        </select></div>
       ${sold.length ? `<div class="tbl">
         <div class="tbl-head">
           <div>Data</div><div>Articolo</div><div class="c-src">Fonte</div><div class="tbl-cell num">Costo</div>
@@ -231,16 +251,22 @@ const Views = (() => {
     const budget = attive.reduce((s, d) => s + num(d.prezzoRichiesto), 0);
     const atteso = attive.reduce((s, d) => s + (num(d.prezzoVenditaAtteso) > 0 ? num(d.prezzoVenditaAtteso) - num(d.prezzoRichiesto) : 0), 0);
     return `
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-ico">🔎</div><div><div class="stat-label">Opportunità attive</div><div class="stat-value">${attive.length}</div><div class="stat-sub">in trattativa o da contattare</div></div></div>
-      <div class="stat-card"><div class="stat-ico w">🛒</div><div><div class="stat-label">Budget richiesto</div><div class="stat-value">${money(budget)}</div><div class="stat-sub">se acquisti tutto</div></div></div>
-      <div class="stat-card"><div class="stat-ico g">💶</div><div><div class="stat-label">Profitto atteso</div><div class="stat-value pos">${money(atteso)}</div><div class="stat-sub">differenza vendita − acquisto</div></div></div>
-      <div class="stat-card"><div class="stat-ico p">➕</div><div><div class="stat-label">Aggiungi</div><div style="margin-top:6px"><button class="btn btn-primary btn-sm" data-action="add-deal">Nuova opportunità</button></div></div></div>
+    <div class="kpi reveal">
+      <span class="label">Profitto atteso dalle occasioni</span>
+      <b class="${atteso >= 0 ? 'up' : 'down'}">${money(atteso)}</b>
+      <span class="sub">${attive.length} opportunità attive · budget ${money(budget)}</span>
+      <div class="bar"><i style="width:${attive.length ? Math.min(100, Math.max(6, atteso > 0 ? 100 * atteso / Math.max(1, budget + atteso) : 6)) : 0}%"></i></div>
+    </div>
+
+    <div class="row3 reveal" style="margin-top:11px">
+      <div class="mini"><span class="label">Attive</span><b>${attive.length}</b></div>
+      <div class="mini"><span class="label">Budget</span><b>${money(budget)}</b></div>
+      <div class="mini"><button class="btn btn-primary btn-sm" style="width:100%;margin-top:6px" data-action="add-deal">＋ Nuova</button></div>
     </div>
     ${deals.length
-      ? `<div class="deals-grid">${deals.map(dealCard).join('')}</div>`
+      ? `<div class="sec reveal">Le tue occasioni</div><div class="deals-grid">${deals.map(dealCard).join('')}</div>`
       : Utils.emptyState('🛒', 'Nessuna occasione in lista',
-          'Qui tieni traccia di ciò che vuoi comprare per rivendere: annucci Vinted, venditori privati, mercatini.',
+          'Qui tieni traccia di ciò che vuoi comprare per rivendere: annunci Vinted, venditori privati, mercatini.',
           `<button class="btn btn-primary" data-action="add-deal">＋ Nuova opportunità</button>`)}`;
   }
 
