@@ -31,73 +31,46 @@ const Views = (() => {
       </div>`;
     }
     const d = Store.dashboardStats();
-    const recent = Store.soldSorted().slice(0, 5);
-    const deals = st.deals.filter(x => x.stato !== 'acquistato' && x.stato !== 'scartato').slice(0, 3);
+    const recent = [...st.items].sort((a, b) => String(b.dataAcquisto || '').localeCompare(String(a.dataAcquisto || ''))).slice(0, 4);
+    const targetActive = st.items.filter(i => i.stato !== 'venduto' && Store.hasTarget(i));
     const segTot = Math.max(1, Object.values(d.statusCounts).reduce((a, b) => a + b, 0));
-    const COLORS = { da_fotografare: '#d9820b', da_pubblicare: '#6750c9', in_vendita: '#0db1b6', venduto: '#12996b' };
+    const bar = segTot ? Math.min(100, Math.round((d.statusCounts.in_vendita || 0) / segTot * 100)) : 0;
+
+    const itemRow = i => {
+      const attivo = i.stato !== 'venduto';
+      const prof = Store.profit(i);
+      const prezzo = attivo ? num(i.prezzoVendita) : num(i.prezzoVenduto);
+      const icon = CAT_ICON[i.categoria] || '🧺';
+      const right = attivo
+        ? (prezzo ? `<div class="it-right"><span>${money(prezzo)}</span></div>` : `<div class="it-right"><span>—</span></div>`)
+        : `<div class="it-right"><b class="up">+${money(prof)}</b><span>${money(prezzo)}</span></div>`;
+      return `<div class="item" data-action="edit-item" data-id="${esc(i.id)}">
+        <div class="av">${i.foto ? `<img src="${esc(i.foto)}" alt="">` : icon}</div>
+        <div class="it-txt"><b>${esc(i.nome)}</b><span>${Store.STATI[i.stato] ? Store.STATI[i.stato].label : (attivo ? 'In vendita' : 'Venduto')}</span></div>
+        ${right}
+      </div>`;
+    };
 
     return `
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-ico g">💶</div><div>
-        <div class="stat-label">Guadagni questo mese</div>
-        <div class="stat-value ${d.monthProfit >= 0 ? 'pos' : 'neg'}">${money(d.monthProfit)}</div>
-        <div class="stat-sub">${d.monthSales} vendite · ${money(d.monthRevenue)} di ricavi</div></div>
-      </div>
-      <div class="stat-card"><div class="stat-ico">📈</div><div>
-        <div class="stat-label">Profitto potenziale</div>
-        <div class="stat-value ${d.potential >= 0 ? 'pos' : 'neg'}">${money(d.potential)}</div>
-        <div class="stat-sub">sugli articoli con prezzo già impostato</div></div>
-      </div>
-      <div class="stat-card"><div class="stat-ico w">🧾</div><div>
-        <div class="stat-label">Capitale investito</div>
-        <div class="stat-value">${money(d.invested)}</div>
-        <div class="stat-sub">articoli non ancora venduti</div></div>
-      </div>
-      <div class="stat-card"><div class="stat-ico p">🏷️</div><div>
-        <div class="stat-label">Articoli</div>
-        <div class="stat-value">${d.activeCount} attivi</div>
-        <div class="stat-sub">${d.soldCount} venduti in tutto</div></div>
-      </div>
+    <div class="kpi reveal">
+      <span class="label">Guadagno questo mese</span>
+      <b class="${d.monthProfit >= 0 ? 'up' : 'down'}">${money(d.monthProfit)}</b>
+      <span class="sub">${d.monthSales} vendite · ${money(d.monthRevenue)} di ricavi</span>
+      <div class="bar"><i style="width:${bar}%"></i></div>
     </div>
 
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-head"><div class="card-title">Profitto negli ultimi 6 mesi</div></div>
-        ${Utils.chart(d.months, [{ name: 'Profitto', color: '#0db1b6', values: d.months.map(m => Math.round(m.profit * 100) / 100) }])}
-      </div>
-      <div class="card">
-        <div class="card-head"><div class="card-title">Stato inventario</div></div>
-        <div class="segbar">
-          ${Object.keys(Store.STATI).map(k => d.statusCounts[k] ? `<div style="width:${(d.statusCounts[k] / segTot * 100).toFixed(1)}%;background:${COLORS[k]}" title="${Store.STATI[k].label}: ${d.statusCounts[k]}"></div>` : '').join('')}
-        </div>
-        <div class="segbar-legend">
-          ${Object.keys(Store.STATI).map(k => `<div class="row"><i style="background:${COLORS[k]}"></i>${Store.STATI[k].emoji} ${Store.STATI[k].label}<b>${d.statusCounts[k]}</b></div>`).join('')}
-        </div>
-      </div>
+    <div class="row3 reveal" style="margin-top:11px">
+      <div class="mini"><span class="label">Investito</span><b>${money(d.invested)}</b></div>
+      <div class="mini"><span class="label">Potenziale</span><b class="up">${money(d.potential)}</b></div>
+      <div class="mini"><span class="label">Venduti</span><b>${d.soldCount}</b></div>
     </div>
 
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-head"><div class="card-title">Ultime vendite</div>
-          <button class="btn btn-sm btn-ghost" data-view="sales">Vedi tutte</button></div>
-        ${recent.length ? `<div class="mini-list">${recent.map(i => `
-          <div class="mini-row"><span class="ico">💰</span>
-            <div><div class="name">${esc(i.nome)}</div><div class="sub">${fmtDate(i.dataVendita)}${i.brand ? ' · ' + esc(i.brand) : ''}</div></div>
-            <span class="val ${Store.profit(i) >= 0 ? 'pos' : 'neg'}">${money(Store.profit(i))}</span>
-          </div>`).join('')}</div>`
-        : `<p class="hint">Nessuna vendita registrata ancora. Quando vendi un articolo, premi 💰 sulla scheda.</p>`}
-      </div>
-      <div class="card">
-        <div class="card-head"><div class="card-title">Prossimi acquisti</div>
-          <button class="btn btn-sm btn-ghost" data-view="shopping">Lista</button></div>
-        ${deals.length ? `<div class="mini-list">${deals.map(x => `
-          <div class="mini-row"><span class="ico">🛒</span>
-            <div><div class="name">${esc(x.nome)}</div><div class="sub">${esc(Store.DEAL_STATI[x.stato] ? Store.DEAL_STATI[x.stato].label.replace(/^\S+\s/, '') : '')}${x.prezzoRichiesto ? ' · chiede ' + money(x.prezzoRichiesto) : ''}</div></div>
-            <span class="val">${x.prezzoVenditaAtteso ? '→ ' + money(x.prezzoVenditaAtteso) : '—'}</span>
-          </div>`).join('')}</div>`
-        : `<p class="hint">Aggiungi alla lista le occasioni che vuoi cogliere: trattative in corso, venditori privati, mercatini.</p>`}
-      </div>
-    </div>`;
+    <div class="sec reveal">Ultimi movimenti <span class="more" data-view="inventory">Tutti ›</span></div>
+    <div class="list">
+      ${recent.length ? recent.map(itemRow).join('') : `<div class="item"><div class="av">🧺</div><div class="it-txt"><b>Nessun articolo</b><span>Aggiungi il tuo primo capo</span></div></div>`}
+    </div>
+
+    <div class="center"><button class="fab" data-action="add-item">＋</button></div>`;
   }
 
   /* --- inventario --- */
@@ -109,27 +82,14 @@ const Views = (() => {
 
   function inventory() {
     const c = invCounts();
-    const chips = [['tutti', 'Tutti', ''], ...Object.keys(Store.STATI).map(k => [k, `${Store.STATI[k].emoji} ${Store.STATI[k].label}`, k])]
-      .map(([v, l]) => `<button class="chip ${App.ui.inv.stato === v ? 'active' : ''}" data-action="inv-status" data-status="${v}">${l} <b>(${c[v] ?? 0})</b></button>`).join('');
+    const chips = [['tutti', '✓ Tutti', ''], ...Object.keys(Store.STATI).map(k => [k, `${Store.STATI[k].emoji} ${Store.STATI[k].label}`, k])]
+      .map(([v, l]) => `<button class="chip ${App.ui.inv.stato === v ? 'on' : ''}" data-action="inv-status" data-status="${v}">${l}${v === 'tutti' ? '' : ` (${c[v] ?? 0})`}</button>`).join('');
     return `
-    <div class="card">
-      <div class="inv-toolbar">
-        <div class="search-box"><input class="input" data-filter="q" placeholder="Cerca per nome, brand, taglia…"></div>
-        <div class="toolbar-right">
-          <select class="select" data-filter="fonte">
-            <option value="tutte">Tutte le fonti</option>
-            ${Object.entries(Store.FONTI).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}
-          </select>
-          <select class="select" data-filter="sort">
-            <option value="recenti">Più recenti</option>
-            <option value="prezzo">Prezzo più alto</option>
-            <option value="nome">Nome (A-Z)</option>
-          </select>
-        </div>
-      </div>
-      <div class="chips" style="margin-top:13px" data-group="stato">${chips}</div>
+    <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 14px">
+      ${chips}
     </div>
-    <div id="inv-list">${inventoryList()}</div>`;
+    <div id="inv-list">${inventoryList()}</div>
+    <div class="center"><button class="fab" data-action="add-item">＋</button></div>`;
   }
 
   function filteredItems() {
@@ -149,36 +109,27 @@ const Views = (() => {
 
   function itemCard(it) {
     const attivo = it.stato !== 'venduto';
-    const costo = Store.cost(it);
-    const prezzo = attivo ? num(it.prezzoVendita) : num(it.prezzoVenduto);
     const prof = Store.profit(it);
-    let profitLine;
-    if (!attivo) {
-      profitLine = `<div class="profit-line ${prof >= 0 ? 'pos' : 'neg'}">guadagno ${money(prof)}</div>`;
-    } else if (Store.hasTarget(it)) {
-      profitLine = `<div class="profit-line ${prof >= 0 ? 'pos' : 'neg'}">potenziale ${money(prof)}</div>`;
-    } else {
-      profitLine = `<div class="profit-line none">prezzo da definire</div>`;
-    }
+    const prezzo = attivo ? num(it.prezzoVendita) : num(it.prezzoVenduto);
+    const st = Store.STATI[it.stato] || {};
+    const badge = `<span class="badge">${st.emoji ? `<span>${st.emoji}</span>` : (attivo ? '<span class="dot-live"></span>' : '')} ${esc(st.label || it.stato)}</span>`;
+    const icon = CAT_ICON[it.categoria] || '🧺';
     return `
-    <article class="item-card ${attivo ? '' : 'is-sold'}" data-action="edit-item" data-id="${it.id}">
-      <div class="item-photo">${photo(it)}</div>
-      <div class="item-body">
-        <div class="badges">${statusBadge(it.stato)}${sourceBadge(it.fonte)}</div>
-        <h3 class="item-name">${esc(it.nome)}</h3>
-        <p class="item-meta">${[it.brand, it.taglia ? 'T. ' + it.taglia : ''].filter(Boolean).map(esc).join(' · ') || '&nbsp;'}</p>
-        <div class="price-row">
-          <span class="cost">costo ${money(costo)}</span>
-          <span class="price">${prezzo ? money(prezzo) : '—'}</span>
+    <article class="card reveal item-card ${attivo ? '' : 'is-sold'}" data-action="edit-item" data-id="${esc(it.id)}">
+      <div class="thumb item-photo">${it.foto ? `<img src="${esc(it.foto)}" alt="${esc(it.nome)}">` : icon}${badge}</div>
+      <div class="inv-body item-body">
+        <div class="nm item-name">${esc(it.nome)}</div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+          <div class="price">${prezzo ? money(prezzo) : '—'}</div>
+          ${attivo && prof > 0 ? `<div class="gain">+${money(prof)}</div>` : (!attivo && prof > 0 ? `<div class="gain">+${money(prof)}</div>` : '')}
         </div>
-        ${profitLine}
       </div>
-      <div class="item-actions">
+      <div class="item-actions" style="display:none">
         ${it.link ? `<button class="icon-btn" title="Apri annuncio" data-action="open-link" data-href="${esc(it.link)}">🔗</button>` : ''}
         ${attivo
-          ? `<button class="icon-btn" title="Registra vendita" data-action="sell-item" data-id="${it.id}">💰</button>`
-          : `<button class="icon-btn" title="Riapri annuncio" data-action="reopen-item" data-id="${it.id}">↩️</button>`}
-        <button class="icon-btn" title="Elimina" data-action="delete-item" data-id="${it.id}">🗑️</button>
+          ? `<button class="icon-btn" title="Registra vendita" data-action="sell-item" data-id="${esc(it.id)}">💰</button>`
+          : `<button class="icon-btn" title="Riapri annuncio" data-action="reopen-item" data-id="${esc(it.id)}">↩️</button>`}
+        <button class="icon-btn" title="Elimina" data-action="delete-item" data-id="${esc(it.id)}">🗑️</button>
       </div>
     </article>`;
   }
@@ -193,7 +144,7 @@ const Views = (() => {
         hasAny ? '' : `<button class="btn btn-primary" data-action="add-item">＋ Nuovo articolo</button>
           <button class="btn btn-ghost" data-action="load-sample">✨ Carica dati di esempio</button>`);
     }
-    return `<div class="inv-grid">${list.map(itemCard).join('')}</div>`;
+    return `<div class="inv inv-grid">${list.map(itemCard).join('')}</div>`;
   }
 
   /* --- vendite --- */

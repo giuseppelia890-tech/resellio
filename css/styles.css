@@ -212,9 +212,15 @@ img{max-width:100%;display:block}
   border-radius:var(--r-l);
   box-shadow:var(--inner-light);
   padding:20px;
-  transition:border-color var(--dur-base) var(--ease-soft);
+  transition:border-color var(--dur-base) var(--ease-soft),transform var(--dur-base) var(--ease-soft);
 }
 .card:hover{border-color:var(--line-2)}
+.card.plain{background:transparent;border-color:transparent;box-shadow:none;padding:0}
+.card.tint{background:linear-gradient(150deg,rgba(0,119,130,.22),rgba(0,119,130,.05) 75%);border-color:rgba(0,119,130,.32)}
+.card.reveal{animation:reveal-up var(--dur-slow) var(--ease-soft) both}
+.card.reveal:nth-child(2){animation-delay:var(--stagger)}
+.card.reveal:nth-child(3){animation-delay:calc(var(--stagger)*2)}
+.card.reveal:nth-child(4){animation-delay:calc(var(--stagger)*3)}
 .card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
 .card-title{font-size:16px;font-weight:700;letter-spacing:-.2px}
 .muted{color:var(--ink-soft)}
@@ -222,9 +228,104 @@ img{max-width:100%;display:block}
 .hint{font-size:12.5px;color:var(--ink-mute);margin:8px 0 0;line-height:1.6}
 
 /* etichetta MAIUSCOLA piccola, tipica di Material 3 */
-.stat-label,.section-title,.out-head h3,.building-block{
+.stat-label,.section-title,.out-head h3,.building-block,.label{
   font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-mute);
 }
+
+/* ===== 6b. Pezzi del look "moderno" (dal disegno approvato) ===== */
+/* titolo di sezione con azione a destra */
+.sec{
+  display:flex;align-items:center;gap:9px;margin:4px 2px -4px;
+  font-size:15px;font-weight:700;letter-spacing:-.2px;
+}
+.sec .more{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--brand-300);cursor:pointer}
+
+/* riquadro grande del guadagno, con barra luminosa */
+.kpi{
+  position:relative;overflow:hidden;
+  border-radius:var(--r-xl);padding:22px;
+  background:linear-gradient(150deg,rgba(0,119,130,.3),rgba(0,119,130,.06) 72%);
+  border:1px solid rgba(0,119,130,.32);box-shadow:var(--inner-light);
+}
+.kpi b{
+  display:block;font-family:var(--mono);font-size:36px;font-weight:500;letter-spacing:-1.4px;
+  margin:7px 0 5px;font-variant-numeric:tabular-nums;
+}
+.kpi .sub{font-size:12.5px;color:var(--ink-soft)}
+.kpi.pos b{color:var(--success)}
+.kpi.neg b{color:var(--danger)}
+
+/* barra di avanzamento */
+.bar{height:6px;border-radius:var(--r-full);background:rgba(255,255,255,.08);overflow:hidden;margin-top:14px}
+.bar i{
+  display:block;height:100%;border-radius:var(--r-full);
+  background:linear-gradient(90deg,var(--brand-500),var(--brand-400));
+  box-shadow:var(--glow-live);transition:width var(--dur-slow) var(--ease-soft);
+}
+
+/* tre numerini in fila */
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.mini{
+  padding:15px;border-radius:var(--r-m);background:var(--surface-1);
+  border:1px solid var(--line);box-shadow:var(--inner-light);min-width:0;
+}
+.mini b{
+  display:block;font-family:var(--mono);font-size:17px;font-weight:500;
+  margin-top:6px;letter-spacing:-.4px;font-variant-numeric:tabular-nums;
+}
+
+/* liste con icona in un quadratino */
+.list{display:flex;flex-direction:column;gap:10px}
+.item{
+  display:flex;align-items:center;gap:14px;padding:13px;
+  border-radius:var(--r-m);background:var(--surface-1);border:1px solid var(--line);
+  box-shadow:var(--inner-light);cursor:pointer;
+  transition:border-color var(--dur-fast),transform var(--dur-base) var(--ease-soft);
+}
+.item:hover{border-color:var(--line-2);transform:translateX(2px)}
+.av{
+  width:52px;height:52px;border-radius:var(--r-m);flex:none;
+  display:grid;place-items:center;font-size:24px;
+  background:var(--surface-3);border:1px solid var(--line);overflow:hidden;
+}
+.av img{width:100%;height:100%;object-fit:cover}
+.it-txt{flex:1;min-width:0}
+.it-txt b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it-txt span{font-size:12px;color:var(--ink-mute)}
+.it-right{text-align:right;flex:none}
+.it-right b{font-family:var(--mono);font-size:14px;font-weight:500}
+.it-right span{display:block;font-size:12px;color:var(--ink-mute);font-family:var(--mono)}
+.up{color:var(--success)}
+.down{color:var(--danger)}
+.reveal{animation:reveal-up var(--dur-slow) var(--ease-soft) both}
+.reveal:nth-child(1){animation-delay:0ms}
+.reveal:nth-child(2){animation-delay:var(--stagger)}
+.reveal:nth-child(3){animation-delay:calc(var(--stagger)*2)}
+.reveal:nth-child(4){animation-delay:calc(var(--stagger)*3)}
+.reveal:nth-child(5){animation-delay:calc(var(--stagger)*4)}
+
+/* pulsante flottante tondo (dentro il contenuto, come nel disegno) */
+.center{display:flex;justify-content:center;padding:4px 0 2px}
+.fab{
+  width:58px;height:58px;border-radius:var(--r-l);border:0;cursor:pointer;
+  background:var(--brand-500);color:#fff;font-size:26px;line-height:1;
+  display:grid;place-items:center;
+  box-shadow:var(--glow-cta),0 10px 26px rgba(0,0,0,.5);
+  transition:transform var(--dur-fast) var(--ease-soft);
+}
+.fab:active{transform:scale(.93)}
+
+/* card con sfumatura del colore principale (analisi prezzo) */
+.card.tint{
+  background:linear-gradient(150deg,rgba(0,119,130,.22),rgba(0,119,130,.05) 75%);
+  border-color:rgba(0,119,130,.32);
+}
+.card-head .ttl{flex:1;font-size:15px;font-weight:600}
+.btn-tonal{
+  background:rgba(0,119,130,.18);color:var(--brand-300);border-color:rgba(0,119,130,.32);
+}
+.btn-tonal:hover{background:rgba(0,119,130,.26);color:#fff}
+.btn-pill{border-radius:var(--r-full)}
 
 /* ===== 7. Bottoni (a pillola, M3) ===== */
 .btn{
@@ -387,12 +488,32 @@ input[type="date"]{color-scheme:dark}
   display:grid;place-items:center;font-size:44px;
 }
 .item-photo img{width:100%;height:100%;object-fit:cover}
+
+/* etichetta di stato in alto a sinistra, sopra la foto (come nel disegno) */
+.item-photo .badge,
+.thumb .badge{
+  position:absolute;top:10px;left:10px;
+  background:rgba(9,9,11,.74);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid var(--line-2);color:var(--ink);
+}
+.item-photo .badge .dot-live{width:7px;height:7px}
+
+/* anteprima immagine riusabile (dettaglio articolo, modali) */
+.thumb{
+  position:relative;overflow:hidden;border-radius:var(--r-m);
+  background:linear-gradient(150deg,#16262a,#101c20);
+  display:grid;place-items:center;font-size:40px;
+}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb-tall{height:190px;border-radius:var(--r-l)}
+
 .item-body{padding:14px 15px 13px;display:flex;flex-direction:column;gap:9px;flex:1}
 .item-name{font-size:14.5px;font-weight:700;line-height:1.32;letter-spacing:-.1px}
 .item-meta{font-size:12.5px;color:var(--ink-mute)}
 .price-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;margin-top:auto}
 .cost{color:var(--ink-mute);font-weight:500}
 .price{font-family:var(--mono);font-weight:500;font-size:17px;letter-spacing:-.4px}
+.gain{font-size:11.5px;font-weight:600;color:var(--success);font-family:var(--mono)}
 .profit-line{
   font-size:12.5px;font-weight:700;border-radius:var(--r-s);padding:7px 10px;text-align:center;
   border:1px solid transparent;

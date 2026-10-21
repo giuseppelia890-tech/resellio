@@ -100,6 +100,28 @@ Quando cambi qualcosa nei file dell'app (`js/`, `css/`, `index.html`…), ricomp
 > Nota: nell'APK e nella PWA i dati sono salvati nel dispositivo, separati da quelli del browser.
 > Usa ⬇️ **Esporta** / ⬆️ **Importa** per spostarli.
 
+### Com'è fatta la grafica, e perché su Android ora si vede bene
+
+Resellio usa **una sola grafica** in stile **Material Design 3 versione scura**, con card
+arrotondate, chip, pulsante flottante, barra di navigazione in basso con l'indicatore a pillola
+e numeri monospaziati. Cambia solo la **disposizione**, che si adatta allo schermo:
+
+| | Telefono (fino a 900px) | Computer (oltre 900px) |
+|---|---|---|
+| Navigazione | barra in basso | barra laterale |
+| Contenuti | una colonna, pulsanti grandi | griglia a più colonne |
+| Modali | foglio che sale dal basso | finestra centrata |
+| Tabella vendite | lista di schede | tabella |
+
+Prima l'app su Android sembrava "in modalità desktop" per due motivi, entrambi sistemati:
+
+1. **I breakpoint erano troppo alti** (720px e 980px): un telefono in verticale è largo
+   ~360–430px, quindi restava nel layout da desktop. Ora il layout da telefono parte da
+   **900px** e quello per telefoni stretti da **560px**.
+2. **La finestra dell'APK non era configurata**: in `capacitor.config.json` mancavano le
+   impostazioni del WebView (schermo intero, gestione tastiera, barra di stato scura, margini
+   per gli schermi con angoli arrotondati). Ora ci sono.
+
 ## 👤 Account online (Google o email)
 
 Resellio può avere un **account vero**, con accesso via **Google** o **email e password**:
